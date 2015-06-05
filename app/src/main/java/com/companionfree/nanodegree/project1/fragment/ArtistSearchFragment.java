@@ -1,19 +1,27 @@
 package com.companionfree.nanodegree.project1.fragment;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
@@ -30,7 +38,7 @@ import kaaes.spotify.webapi.android.models.ArtistsPager;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment implements TextWatcher{
+public class ArtistSearchFragment extends Fragment implements TextWatcher{
 
     private EditText searchText;
     private SpotifyService spotifyService;
@@ -44,7 +52,9 @@ public class MainActivityFragment extends Fragment implements TextWatcher{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        setHasOptionsMenu(true);
+
+        View rootView = inflater.inflate(R.layout.fragment_artistsearch, container, false);
 
         searchText = (EditText) rootView.findViewById(
                 R.id.search_text_input);
@@ -88,8 +98,10 @@ public class MainActivityFragment extends Fragment implements TextWatcher{
                     try {
                         Thread.sleep(SEARCH_DELAY_MILLIS);
                         ArtistsPager results = spotifyService.searchArtists(searchString);
+
                         artists.clear();
                         artists.addAll(results.artists.items);
+
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -105,6 +117,57 @@ public class MainActivityFragment extends Fragment implements TextWatcher{
             }.execute();
         }
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        final MenuItem searchItem = menu.findItem(R.id.search);
+
+        //TODO
+        MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+//                resetSearch();
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+//                if (!ThemeManager.getUseContentResolver()) {
+//                    Toast.makeText(getActivity(), getString(R.string.search_not_available), Toast.LENGTH_LONG).show();
+//                }
+
+                return true;
+            }
+
+        });
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search)
+                .getActionView();
+        if (null != searchView) {
+            searchView.setSearchableInfo(searchManager
+                    .getSearchableInfo(getActivity().getComponentName()));
+            searchView.setIconifiedByDefault(false);
+        }
+
+        SearchView.OnQueryTextListener queryTextListener = new SearchView.OnQueryTextListener() {
+            public boolean onQueryTextChange(String newText) {
+//                if (ThemeManager.getUseContentResolver()) {
+//                    filterSearch(newText);
+//                }
+
+                return true;
+            }
+
+            public boolean onQueryTextSubmit(String query) {
+                //Here u can get the value "query" which is entered in the search box.
+                return true;
+            }
+        };
+        searchView.setOnQueryTextListener(queryTextListener);
     }
 
     @Override

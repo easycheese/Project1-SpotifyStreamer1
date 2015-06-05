@@ -26,6 +26,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="bottom"
+        android:layout_margin="8dp"
         android:layout_toRightOf="@id/record_row_image"
         android:layout_below="@id/divider"
         >

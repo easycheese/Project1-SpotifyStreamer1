@@ -10,20 +10,20 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.activity.ArtistActivity;
-import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.GenericViewHolder;
 
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
+import kaaes.spotify.webapi.android.models.Track;
 
 
-public class ArtistAdapter extends RecyclerView.Adapter<GenericViewHolder> implements View.OnClickListener{
+public class TrackAdapter extends RecyclerView.Adapter<GenericViewHolder> implements View.OnClickListener{
 
-    private List<Artist> artistList;
+    private List<Track> artistList;
 
-    public ArtistAdapter(List<Artist> trngRecords) {
+    public TrackAdapter(List<Track> trngRecords) {
         this.artistList = trngRecords;
 
     }
@@ -37,30 +37,33 @@ public class ArtistAdapter extends RecyclerView.Adapter<GenericViewHolder> imple
         return new GenericViewHolder(itemView);
     }
 
+
     @Override
     public void onBindViewHolder(final GenericViewHolder viewHolder, final int i) {
-        final Artist artist = artistList.get(i);
+        final Track track = artistList.get(i);
 
-        viewHolder.line2.setVisibility(View.GONE);
-        viewHolder.line1.setText(artist.name);
 
-        if (!artist.images.isEmpty()) {
-            Image image = artist.images.get(0);
+        viewHolder.line1.setText(track.name);
+        viewHolder.line2.setText(track.album.name);
+
+
+        if (!track.album.images.isEmpty()) {
+            Image image = track.album.images.get(0);
             Glide.with(viewHolder.albumImage.getContext()).load(image.url)
                     .centerCrop()
                     .into(viewHolder.albumImage);
         }
 
-        viewHolder.recyclerViewRow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Context ctx = viewHolder.recyclerViewRow.getContext();
-                Intent i = new Intent(ctx, ArtistActivity.class);
-                i.putExtra(TopSongsFragment.ARTIST_NAME, artist.name);
-                i.putExtra(TopSongsFragment.ARTIST_ID, artist.id);
-                ctx.startActivity(i);
-            }
-        });
+//        viewHolder.recyclerViewRow.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Context ctx = viewHolder.recyclerViewRow.getContext();
+//                Intent i = new Intent(ctx, ArtistActivity.class);
+////                i.putExtra(AddRecord.STORED_RECORD_ID, trngRecord.getRecordId());
+////                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                ctx.startActivity(i);
+//            }
+//        });
 
     }
 
