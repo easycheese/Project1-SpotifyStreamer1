@@ -1,9 +1,11 @@
-package com.companionfree.nanodegree.project1;
+package com.companionfree.nanodegree.project1.activity;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.companionfree.nanodegree.project1.R;
 
 
 public class MainActivity extends ActionBarActivity {
