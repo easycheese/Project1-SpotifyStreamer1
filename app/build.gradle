@@ -30,5 +30,4 @@ dependencies {
 
     compile 'com.github.bumptech.glide:glide:3.6.0'
 
-    compile 'de.greenrobot:eventbus:2.4.0' //https://github.com/greenrobot/EventBus
 }

@@ -1,9 +1,10 @@
 package com.companionfree.nanodegree.project1.model;
 
+
 /**
- * Created by Kyle on 6/4/2015.
+ * Created by Kyle on 6/4/2015
  */
-public class ClickEvent {
+public class ClickEvent  {
 
     private int position;
 
@@ -14,4 +15,6 @@ public class ClickEvent {
     public int getPosition() {
         return position;
     }
+
+
 }

@@ -3,6 +3,7 @@ package com.companionfree.nanodegree.project1.model;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.companionfree.nanodegree.project1.R;
@@ -14,6 +15,7 @@ import de.greenrobot.event.EventBus;
  */
 public class GenericViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
+    public View recyclerViewRow;
     public ImageView albumImage;
     public TextView line1;
     public TextView line2;
@@ -21,7 +23,8 @@ public class GenericViewHolder extends RecyclerView.ViewHolder implements View.O
     public GenericViewHolder(View itemView) {
         super(itemView);
 
-        albumImage = (ImageView) itemView.findViewById(R.id.record_row_icon);
+        recyclerViewRow = itemView;
+        albumImage = (ImageView) itemView.findViewById(R.id.record_row_image);
         line1 = (TextView) itemView.findViewById(R.id.record_row_holder_line1);
         line2 = (TextView) itemView.findViewById(R.id.record_row_holder_line2);
 
