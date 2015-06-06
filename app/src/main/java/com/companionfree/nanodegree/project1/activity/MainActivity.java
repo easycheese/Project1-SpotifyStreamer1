@@ -11,11 +11,12 @@ import com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_artistsearch);
+        setContentView(R.layout.activity_base);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -28,11 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
 
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

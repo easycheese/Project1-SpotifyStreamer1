@@ -3,25 +3,25 @@ package com.companionfree.nanodegree.project1.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.ArtistActivity;
+import com.companionfree.nanodegree.project1.activity.MainActivity;
 import com.companionfree.nanodegree.project1.adapter.TrackAdapter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
 
@@ -29,13 +29,10 @@ import kaaes.spotify.webapi.android.models.Tracks;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class TopSongsFragment extends Fragment{
+public class TopSongsFragment extends BaseFragment{
 
-    private SpotifyService spotifyService;
-    private AsyncTask searchTask;
     private List<Track> tracks;
     private TrackAdapter trackAdapter;
-    private ProgressBar loadingBar;
 
     private String artistId;
 
@@ -46,44 +43,58 @@ public class TopSongsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_artistsearch, container, false);
-
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_searchresults);
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(llm);
+        super.onCreateView(inflater, container, savedInstanceState);
 
         tracks = new ArrayList<>();
         trackAdapter = new TrackAdapter(tracks);
         recyclerView.setAdapter(trackAdapter);
 
-        SpotifyApi api = new SpotifyApi();
-        spotifyService = api.getService();
-
         Intent i = getActivity().getIntent();
         artistId = i.getStringExtra(ARTIST_ID);
-
-
-        loadingBar = (ProgressBar) rootView.findViewById(R.id.artist_loading_bar);
-
 
         return rootView;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        executeSearch();
+    public void onSaveInstanceState(Bundle outState) {
+        killRunningTaskIfExists();
+
+        String json = new Gson().toJson(tracks);
+        outState.putString(resultsSave, json);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            String results = savedInstanceState.getString(resultsSave);
+            Type collectionType = new TypeToken<Collection<Track>>(){}.getType();
+            List<Track> trackResults = new Gson().fromJson(results, collectionType);
+            tracks.addAll(trackResults);
+        } else {
+            executeSearch();
+        }
     }
 
     private void executeSearch() {
-        if (searchTask != null) {
-            searchTask.cancel(true);
-            searchTask = null;
+        boolean isConnected = getConnectivityStatus();
+        killRunningTaskIfExists();
+
+        if (!isConnected) {
+            displayError(R.string.error_network_availability);
+        } else {
+            removeError();
+            loadingBar.setVisibility(View.VISIBLE);
+            searchTask = getSearchTask().execute();
         }
 
         loadingBar.setVisibility(View.VISIBLE);
+        searchTask = getSearchTask().execute();
 
-        searchTask = new AsyncTask<Void, Void, Void>() {
+    }
+    private AsyncTask<Void, Void, Void> getSearchTask() {
+        return new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 Map<String, Object> options = new HashMap<>();
@@ -102,9 +113,6 @@ public class TopSongsFragment extends Fragment{
                 trackAdapter.notifyDataSetChanged();
                 loadingBar.setVisibility(View.GONE);
             }
-        }.execute();
-
-
+        };
     }
-
 }
