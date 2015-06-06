@@ -48,9 +48,6 @@ public class TopSongsFragment extends Fragment{
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_artistsearch, container, false);
 
-        TextInputLayout textInputLayout = (TextInputLayout) rootView.findViewById(R.id.search_text_layout);
-        textInputLayout.setVisibility(View.GONE);
-
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_searchresults);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);
