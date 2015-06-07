@@ -31,10 +31,81 @@
         android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/song_image"
-        android:layout_width="200dp"
-        android:layout_height="200dp" />
+        android:layout_width="@dimen/album_dimen_large"
+        android:layout_height="@dimen/album_dimen_large" />
 
-    <include layout="@layout/my_toolbar"
-        android:id="@+id/toolbar"
+    <SeekBar
+        android:id="@+id/song_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_vertical_margin"
+        android:indeterminate="false"
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:text="0:00"
+            />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:text="5:00"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            >
+            <ImageButton
+                android:id="@+id/media_previous"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_skip_previous_black_48dp"
+                android:layout_gravity="right"
+                />
+
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/media_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_play_arrow_black_48dp"
+                android:layout_gravity="center_horizontal"
+                />
+        </FrameLayout>
+        <FrameLayout
+
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/media_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_skip_next_black_48dp"
+                android:layout_gravity="left"
+                />
+        </FrameLayout>
+    </LinearLayout>
 </LinearLayout>

@@ -29,4 +29,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.2.0'  // Uses this to create HTTP connections
 
     compile 'com.github.bumptech.glide:glide:3.6.0'
+
+    compile 'com.android.support:palette-v7:22.2.0'
 }

@@ -2,21 +2,32 @@ package com.companionfree.nanodegree.project1.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.adapter.TrackAdapter;
 import com.google.gson.Gson;
@@ -46,9 +57,14 @@ public class SingleSongFragment extends Fragment {
 
     private Track track;
     private SpotifyService spotifyService;
-    protected AsyncTask searchTask;
-    protected ProgressBar loadingBar;
-    protected ImageView albumImage;
+    private AsyncTask searchTask;
+    private ProgressBar loadingBar;
+    private ImageView albumImage;
+    private SeekBar progressBar;
+
+    private ImageButton previous;
+    private ImageButton play;
+    private ImageButton next;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,6 +76,11 @@ public class SingleSongFragment extends Fragment {
         TextView albumText = (TextView) rootView.findViewById(R.id.song_album);
         TextView songText = (TextView) rootView.findViewById(R.id.song_name);
         albumImage = (ImageView) rootView.findViewById(R.id.song_image);
+        progressBar = (SeekBar) rootView.findViewById(R.id.song_progress);
+
+        previous = (ImageButton) rootView.findViewById(R.id.media_previous);
+        play = (ImageButton) rootView.findViewById(R.id.media_play);
+        next = (ImageButton) rootView.findViewById(R.id.media_next);
 
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
@@ -71,9 +92,12 @@ public class SingleSongFragment extends Fragment {
         artistText.setText(track.artists.get(0).name);
         albumText.setText(track.album.name);
         songText.setText(track.name);
+        progressBar.setMax((int)track.duration_ms);
 
         return rootView;
     }
+
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -91,6 +115,38 @@ public class SingleSongFragment extends Fragment {
             Image image = track.album.images.get(0);
             Glide.with(getActivity()).load(image.url)
                     .centerCrop()
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            Drawable d  = resource.getCurrent();
+
+                            int width = d.getIntrinsicWidth();
+                            width = width > 0 ? width : 1;
+                            int height = d.getIntrinsicHeight();
+                            height = height > 0 ? height : 1;
+
+                            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(bitmap);
+                            d.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                            d.draw(canvas);
+
+
+
+
+                            Palette.Builder palette = new Palette.Builder(bitmap);
+                            Palette p = palette.generate();
+
+                            next.setBackgroundColor(p.getMutedColor(0));
+                            play.setBackgroundColor(p.getVibrantColor(0));
+                            previous.setBackgroundColor(p.getDarkVibrantColor(0));
+                            return false;
+                        }
+                    })
                     .into(albumImage);
         }
 
