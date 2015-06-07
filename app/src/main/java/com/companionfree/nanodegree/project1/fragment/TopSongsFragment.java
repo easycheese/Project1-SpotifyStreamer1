@@ -3,14 +3,11 @@ package com.companionfree.nanodegree.project1.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.activity.ArtistActivity;
-import com.companionfree.nanodegree.project1.activity.MainActivity;
 import com.companionfree.nanodegree.project1.adapter.TrackAdapter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -88,9 +85,6 @@ public class TopSongsFragment extends BaseFragment{
             loadingBar.setVisibility(View.VISIBLE);
             searchTask = getSearchTask().execute();
         }
-
-        loadingBar.setVisibility(View.VISIBLE);
-        searchTask = getSearchTask().execute();
 
     }
     private AsyncTask<Void, Void, Void> getSearchTask() {
