@@ -3,9 +3,7 @@ package com.companionfree.nanodegree.project1.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,8 +11,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,22 +25,12 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.adapter.TrackAdapter;
+import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Image;
-import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
  * Created by Kyle on 6/6/2015
@@ -55,7 +41,7 @@ public class SingleSongFragment extends Fragment {
 
     protected String resultsSave = "track";
 
-    private Track track;
+    private CustomTrack track;
     private SpotifyService spotifyService;
     private AsyncTask searchTask;
     private ProgressBar loadingBar;
@@ -87,7 +73,7 @@ public class SingleSongFragment extends Fragment {
 
         Intent i = getActivity().getIntent();
         String trackJson = i.getStringExtra(TRACK);
-        track = new Gson().fromJson(trackJson, Track.class);
+        track = new Gson().fromJson(trackJson, CustomTrack.class);
 
         artistText.setText(track.artists.get(0).name);
         albumText.setText(track.album.name);
@@ -123,27 +109,25 @@ public class SingleSongFragment extends Fragment {
 
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            Drawable d  = resource.getCurrent();
-
-                            int width = d.getIntrinsicWidth();
-                            width = width > 0 ? width : 1;
-                            int height = d.getIntrinsicHeight();
-                            height = height > 0 ? height : 1;
-
-                            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-                            Canvas canvas = new Canvas(bitmap);
-                            d.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-                            d.draw(canvas);
-
-
-
-
-                            Palette.Builder palette = new Palette.Builder(bitmap);
-                            Palette p = palette.generate();
-
-                            next.setBackgroundColor(p.getMutedColor(0));
-                            play.setBackgroundColor(p.getVibrantColor(0));
-                            previous.setBackgroundColor(p.getDarkVibrantColor(0));
+//                            Drawable d  = resource.getCurrent();
+//
+//                            int width = d.getIntrinsicWidth();
+//                            width = width > 0 ? width : 1;
+//                            int height = d.getIntrinsicHeight();
+//                            height = height > 0 ? height : 1;
+//
+//                            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//                            Canvas canvas = new Canvas(bitmap);
+//                            d.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//                            d.draw(canvas);
+//
+//
+//                            Palette.Builder palette = new Palette.Builder(bitmap);
+//                            Palette p = palette.generate();
+//
+//                            next.setBackgroundColor(p.getMutedColor(0));
+//                            play.setBackgroundColor(p.getVibrantColor(0));
+//                            previous.setBackgroundColor(p.getDarkVibrantColor(0));
                             return false;
                         }
                     })
@@ -152,7 +136,7 @@ public class SingleSongFragment extends Fragment {
 
         if (savedInstanceState != null) {
             String results = savedInstanceState.getString(resultsSave);
-            track = new Gson().fromJson(results, Track.class);
+            track = new Gson().fromJson(results, CustomTrack.class);
         } else {
             executeSearch();
         }
@@ -182,7 +166,7 @@ public class SingleSongFragment extends Fragment {
             @Override
             protected Void doInBackground(Void... params) {
 
-                track = spotifyService.getTrack(track.id);
+
 
                 return null;
             }

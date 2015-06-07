@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.adapter.TrackAdapter;
+import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,7 +29,7 @@ import kaaes.spotify.webapi.android.models.Tracks;
  */
 public class TopSongsFragment extends BaseFragment{
 
-    private List<Track> tracks;
+    private List<CustomTrack> tracks;
     private TrackAdapter trackAdapter;
 
     private String artistId;
@@ -68,7 +69,11 @@ public class TopSongsFragment extends BaseFragment{
             String results = savedInstanceState.getString(resultsSave);
             Type collectionType = new TypeToken<Collection<Track>>(){}.getType();
             List<Track> trackResults = new Gson().fromJson(results, collectionType);
-            tracks.addAll(trackResults);
+            ArrayList<CustomTrack> customTracks = new ArrayList<>();
+            for (Track track : trackResults) {
+                customTracks.add((CustomTrack) track);
+            }
+            tracks.addAll(customTracks);
         } else {
             executeSearch();
         }
@@ -89,14 +94,21 @@ public class TopSongsFragment extends BaseFragment{
     }
     private AsyncTask<Void, Void, Void> getSearchTask() {
         return new AsyncTask<Void, Void, Void>() {
+
             @Override
             protected Void doInBackground(Void... params) {
                 Map<String, Object> options = new HashMap<>();
                 options.put("country", "US");
                 Tracks results = spotifyService.getArtistTopTrack(artistId, options);
-
+                List<Track> resultTracks = results.tracks;
                 tracks.clear();
-                tracks.addAll(results.tracks);
+
+                List<CustomTrack> customTracks = new ArrayList<>();
+                for (Track track : resultTracks) {
+                    customTracks.add(new CustomTrack(track));
+                }
+
+                tracks.addAll(customTracks);
 
                 return null;
             }

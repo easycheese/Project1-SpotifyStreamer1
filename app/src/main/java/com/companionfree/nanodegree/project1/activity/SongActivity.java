@@ -1,5 +1,6 @@
 package com.companionfree.nanodegree.project1.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,8 @@ import android.support.v7.widget.Toolbar;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.SingleSongFragment;
+import com.companionfree.nanodegree.project1.model.CustomTrack;
+import com.google.gson.Gson;
 
 /**
  * Created by Kyle on 6/6/2015
@@ -17,12 +20,20 @@ public class SongActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+        Intent i = getIntent();
+        String trackJson = i.getStringExtra(SingleSongFragment.TRACK);
+        CustomTrack track = new Gson().fromJson(trackJson, CustomTrack.class);
+
         setContentView(R.layout.activity_base);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setBackgroundColor(track.getPaletteColor());
+
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
