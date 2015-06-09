@@ -71,7 +71,7 @@ public class TopSongsFragment extends BaseFragment{
             List<Track> trackResults = new Gson().fromJson(results, collectionType);
             ArrayList<CustomTrack> customTracks = new ArrayList<>();
             for (Track track : trackResults) {
-                customTracks.add((CustomTrack) track);
+                customTracks.add(new CustomTrack(track));
             }
             tracks.addAll(customTracks);
         } else {

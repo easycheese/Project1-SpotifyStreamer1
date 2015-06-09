@@ -2,6 +2,7 @@ package com.companionfree.nanodegree.project1.model;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.graphics.Palette;
 
@@ -31,6 +32,14 @@ public class CustomTrack extends Track {
         return paletteColor;
     }
 
+    public int getPaletteColorDark() {
+        float[] hsv = new float[3];
+        int color = getPaletteColor();
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= 0.8f;
+        return Color.HSVToColor(hsv);
+    }
+
     public void generatePaletteColor(final GlideDrawable resource) {
        new Thread(new Runnable() {
            @Override
@@ -50,6 +59,7 @@ public class CustomTrack extends Track {
 
                Palette.Builder palette = new Palette.Builder(bitmap);
                Palette p = palette.generate();
+
 
                paletteColor = p.getVibrantColor(R.color.color_primary);
            }
