@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import com.companionfree.nanodegree.project1.BuildConfig;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.SingleSongFragment;
+import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.google.gson.Gson;
 
@@ -37,6 +38,10 @@ public class SongActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(track.getPaletteColorDark());
         }
 
+
+
+        toolbar.setTitle(track.artists.get(0).name);
+        toolbar.setSubtitle(track.album.name);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

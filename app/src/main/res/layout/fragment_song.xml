@@ -14,26 +14,32 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:visibility="gone"
         />
-    <TextView
-        android:id="@+id/song_artist"
-        android:text="artist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/song_name"
-        android:text="title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <TextView
-        android:id="@+id/song_album"
-        android:text="title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    <ImageView
-        android:id="@+id/song_image"
-        android:layout_width="@dimen/album_dimen_large"
-        android:layout_height="@dimen/album_dimen_large" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/song_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <!--// TODO change opacity, make other textview a view that bounds below textview-->
+        <TextView
+            android:id="@+id/song_title2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="title2"
+            android:padding="8dp"
+            android:gravity="center_horizontal"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:layout_alignBottom="@id/song_image"
+            android:alpha=".6"
+            />
+
+    </RelativeLayout>
     <SeekBar
         android:id="@+id/song_progress"
         android:layout_width="match_parent"

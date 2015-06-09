@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -58,11 +59,9 @@ public class SingleSongFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_song, container, false);
         loadingBar = (ProgressBar) rootView.findViewById(R.id.loading_bar);
-        TextView artistText = (TextView) rootView.findViewById(R.id.song_artist);
-        TextView albumText = (TextView) rootView.findViewById(R.id.song_album);
-        TextView songText = (TextView) rootView.findViewById(R.id.song_name);
         albumImage = (ImageView) rootView.findViewById(R.id.song_image);
         progressBar = (SeekBar) rootView.findViewById(R.id.song_progress);
+        TextView title2 = (TextView) rootView.findViewById(R.id.song_title2);
 
         previous = (ImageButton) rootView.findViewById(R.id.media_previous);
         play = (ImageButton) rootView.findViewById(R.id.media_play);
@@ -75,9 +74,11 @@ public class SingleSongFragment extends Fragment {
         String trackJson = i.getStringExtra(TRACK);
         track = new Gson().fromJson(trackJson, CustomTrack.class);
 
-        artistText.setText(track.artists.get(0).name);
-        albumText.setText(track.album.name);
-        songText.setText(track.name);
+//        title.setText(track.name);
+        title2.setText(track.name);
+        int alpha = 256;//TODO need alpha of text larger than background
+        title2.setTextColor(Color.argb(alpha, 255, 0, 0));
+        title2.setTextColor(track.getPaletteColor());
         progressBar.setMax((int)track.duration_ms);
 
         return rootView;
@@ -100,7 +101,7 @@ public class SingleSongFragment extends Fragment {
         if (!track.album.images.isEmpty()) {
             Image image = track.album.images.get(0);
             Glide.with(getActivity()).load(image.url)
-                    .centerCrop()
+                    .fitCenter()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
