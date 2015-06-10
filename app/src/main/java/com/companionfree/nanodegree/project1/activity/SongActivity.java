@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.companionfree.nanodegree.project1.BuildConfig;
 import com.companionfree.nanodegree.project1.R;
@@ -57,5 +58,13 @@ public class SongActivity extends AppCompatActivity {
         }
 
     }
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();// app icon in action bar clicked; go home
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

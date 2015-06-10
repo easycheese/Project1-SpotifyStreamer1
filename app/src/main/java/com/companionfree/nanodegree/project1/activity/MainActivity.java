@@ -29,20 +29,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-    @Override
-    public void onBackPressed() {
-//        EventBus.getDefault().post(new ClickEvent());
-        // do something on back.
-        Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
-        return;
-    }
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        EventBus.getDefault().post(new ClickEvent());
-        Toast.makeText(this, "click", Toast.LENGTH_SHORT).show();
-        return super.onKeyDown(keyCode, event);
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

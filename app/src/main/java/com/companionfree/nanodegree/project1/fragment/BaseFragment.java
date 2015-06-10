@@ -11,6 +11,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,6 +31,8 @@ public class BaseFragment extends Fragment {
     protected ProgressBar loadingBar;
     protected RecyclerView recyclerView;
     protected TextView errorText;
+    protected LinearLayout errorBlock;
+    protected ImageView errorImage;
     protected View rootView;
 
 
@@ -42,6 +46,8 @@ public class BaseFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_base, container, false);
 
         errorText = (TextView) rootView.findViewById(R.id.error_text);
+        errorImage = (ImageView) rootView.findViewById(R.id.error_image);
+        errorBlock = (LinearLayout) rootView.findViewById(R.id.error_block);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_searchresults);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);
@@ -59,10 +65,13 @@ public class BaseFragment extends Fragment {
             searchTask = null;
         }
     }
-    protected void displayError(int stringId) {
+    protected void displayError(int stringId, boolean statusOnly) { // TODO this isn't working right
         recyclerView.setVisibility(View.GONE);
-        errorText.setVisibility(View.VISIBLE);
+        errorBlock.setVisibility(View.VISIBLE);
         errorText.setText(getActivity().getString(stringId));
+
+        int vis = (statusOnly) ? View.GONE : View.VISIBLE;
+        errorImage.setVisibility(vis);
     }
 
     protected void removeError() {

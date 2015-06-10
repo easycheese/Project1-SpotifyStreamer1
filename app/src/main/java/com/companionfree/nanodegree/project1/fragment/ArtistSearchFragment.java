@@ -91,11 +91,11 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
             artists.clear();
             artistAdapter.notifyDataSetChanged();
             loadingBar.setVisibility(View.GONE);
-            displayError(R.string.error_no_search_text);
+            displayError(R.string.error_no_search_text, true);
         }
 
         if (!isConnected) {
-            displayError(R.string.error_network_availability);
+            displayError(R.string.error_network_availability, false);
         } else if (!searchIsEmpty){
             removeError();
             loadingBar.setVisibility(View.VISIBLE);
@@ -128,7 +128,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
                 loadingBar.setVisibility(View.GONE);
 
                 if (artists.isEmpty()) {
-                    displayError(R.string.error_no_results);
+                    displayError(R.string.error_no_results, false);
                 }
             }
         };
@@ -163,7 +163,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
             List<Artist> artistResults = new Gson().fromJson(results, collectionType);
             artists.addAll(artistResults);
         } else {
-            displayError(R.string.error_no_search_text);
+            displayError(R.string.error_no_search_text, true);
         }
     }
 

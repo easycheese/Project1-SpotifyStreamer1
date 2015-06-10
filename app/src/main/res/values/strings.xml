@@ -6,6 +6,7 @@
 
     <string name="error_network_availability">Network Error.  Please check your connection settings.</string>
     <string name="error_no_results">No results found for your search settings</string>
+    <string name="error_no_results_tracks">No tracks found for this artist</string>
     <string name="error_no_search_text">Welcome to Spotify Streamer!\nTry searching for your favorite artist above!</string>
     <string name="top_tracks">Top 10 Tracks</string>
 </resources>

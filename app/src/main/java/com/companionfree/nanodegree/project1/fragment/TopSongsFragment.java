@@ -84,7 +84,7 @@ public class TopSongsFragment extends BaseFragment{
         killRunningTaskIfExists();
 
         if (!isConnected) {
-            displayError(R.string.error_network_availability);
+            displayError(R.string.error_network_availability, false);
         } else {
             removeError();
             loadingBar.setVisibility(View.VISIBLE);
@@ -118,6 +118,10 @@ public class TopSongsFragment extends BaseFragment{
                 super.onPostExecute(aVoid);
                 trackAdapter.notifyDataSetChanged();
                 loadingBar.setVisibility(View.GONE);
+
+                if (tracks.isEmpty()) {
+                    displayError(R.string.error_no_results_tracks, false);
+                }
             }
         };
     }
