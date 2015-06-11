@@ -37,6 +37,9 @@ public class BaseFragment extends Fragment {
 
 
     protected String resultsSave = "results";
+    protected String errorVisibilitySave = "errorVis";
+    protected String errorImageVisibilitySave = "errorImageVis";
+    protected String errorTextSave = "errorText";
 
 
     @Override
@@ -76,7 +79,20 @@ public class BaseFragment extends Fragment {
 
     protected void removeError() {
         recyclerView.setVisibility(View.VISIBLE);
-        errorText.setVisibility(View.GONE);
+        errorBlock.setVisibility(View.GONE);
+    }
+
+    protected void saveError(Bundle outState) {
+        outState.putInt(errorVisibilitySave, errorBlock.getVisibility());
+        outState.putInt(errorImageVisibilitySave, errorImage.getVisibility());
+        outState.putString(errorTextSave, errorText.getText().toString());
+    }
+    protected void displaySavedError(Bundle savedInstanceState) {
+        //noinspection ResourceType
+        errorBlock.setVisibility(savedInstanceState.getInt(errorVisibilitySave, View.GONE));
+        //noinspection ResourceType
+        errorImage.setVisibility(savedInstanceState.getInt(errorImageVisibilitySave, View.GONE));
+        errorText.setText(savedInstanceState.getString(errorTextSave));
     }
     protected Boolean getConnectivityStatus() {
         ConnectivityManager cm =

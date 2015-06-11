@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
@@ -40,7 +41,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     private String searchState_Save = "search_state";
     private String searchText_Save = "search_text";
     private String searchKeyboardEnabled_Save = "search_keyboard_enabled";
-    private SearchView searchView;
+
 
     private List<Artist> artists;
     private ArtistAdapter artistAdapter;
@@ -63,20 +64,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
-
-        rootView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    Toast.makeText(getActivity(), "Back Pressed", Toast.LENGTH_SHORT).show();
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        Toast.makeText(getActivity(), "Back Pressed", Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
 
 
         return rootView;
@@ -127,8 +114,9 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
                 artistAdapter.notifyDataSetChanged();
                 loadingBar.setVisibility(View.GONE);
 
-                if (artists.isEmpty()) {
+                if (artists != null && artists.isEmpty()) {
                     displayError(R.string.error_no_results, false);
+                    Toast.makeText(getActivity(), R.string.search_fail, Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -138,6 +126,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     @Override
     public void onSaveInstanceState(Bundle outState) {
         killRunningTaskIfExists();
+        saveError(outState);
         outState.putString(searchText_Save, currentSearchText);
         outState.putBoolean(searchState_Save, SEARCH_ENABLED);
         String json = new Gson().toJson(artists);
@@ -155,6 +144,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
+            displaySavedError(savedInstanceState);
             SEARCH_ENABLED = savedInstanceState.getBoolean(searchState_Save);
             SEARCH_KEYBOARD_ENABLED = savedInstanceState.getBoolean(searchKeyboardEnabled_Save);
             currentSearchText = savedInstanceState.getString(searchText_Save);
@@ -174,7 +164,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         MenuItemCompat.setOnActionExpandListener(searchButton,this);
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) searchButton.getActionView();
+        SearchView searchView = (SearchView) searchButton.getActionView();
         searchView.setFocusable(true);
         if (searchView != null) {
 

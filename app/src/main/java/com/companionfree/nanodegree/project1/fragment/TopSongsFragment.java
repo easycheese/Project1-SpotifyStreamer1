@@ -56,7 +56,7 @@ public class TopSongsFragment extends BaseFragment{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         killRunningTaskIfExists();
-
+        saveError(outState);
         String json = new Gson().toJson(tracks);
         outState.putString(resultsSave, json);
         super.onSaveInstanceState(outState);
@@ -66,6 +66,7 @@ public class TopSongsFragment extends BaseFragment{
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
+            displaySavedError(savedInstanceState);
             String results = savedInstanceState.getString(resultsSave);
             Type collectionType = new TypeToken<Collection<Track>>(){}.getType();
             List<Track> trackResults = new Gson().fromJson(results, collectionType);
@@ -119,7 +120,7 @@ public class TopSongsFragment extends BaseFragment{
                 trackAdapter.notifyDataSetChanged();
                 loadingBar.setVisibility(View.GONE);
 
-                if (tracks.isEmpty()) {
+                if (tracks != null && tracks.isEmpty()) {
                     displayError(R.string.error_no_results_tracks, false);
                 }
             }

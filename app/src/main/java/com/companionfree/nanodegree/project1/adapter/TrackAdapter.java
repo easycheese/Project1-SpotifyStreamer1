@@ -21,7 +21,6 @@ import com.google.gson.Gson;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Image;
-import kaaes.spotify.webapi.android.models.Track;
 
 
 public class TrackAdapter extends RecyclerView.Adapter<GenericViewHolder> implements View.OnClickListener{
