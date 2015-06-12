@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.companionfree.nanodegree.project1.R;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 
@@ -28,13 +30,14 @@ public class BaseFragment extends Fragment {
 
     protected SpotifyService spotifyService;
     protected AsyncTask searchTask;
-    protected ProgressBar loadingBar;
-    protected RecyclerView recyclerView;
-    protected TextView errorText;
-    protected LinearLayout errorBlock;
-    protected ImageView errorImage;
-    protected View rootView;
 
+    @InjectView(R.id.loading_bar) protected ProgressBar loadingBar;
+    @InjectView(R.id.recyclerview_searchresults) protected RecyclerView recyclerView;
+    @InjectView(R.id.error_text) protected TextView errorText;
+    @InjectView(R.id.error_block) protected LinearLayout errorBlock;
+    @InjectView(R.id.error_image) protected ImageView errorImage;
+
+    protected View rootView;
 
     protected String resultsSave = "results";
     protected String errorVisibilitySave = "errorVis";
@@ -47,18 +50,14 @@ public class BaseFragment extends Fragment {
         setHasOptionsMenu(true);
 
         rootView = inflater.inflate(R.layout.fragment_base, container, false);
+        ButterKnife.inject(this, rootView);
 
-        errorText = (TextView) rootView.findViewById(R.id.error_text);
-        errorImage = (ImageView) rootView.findViewById(R.id.error_image);
-        errorBlock = (LinearLayout) rootView.findViewById(R.id.error_block);
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_searchresults);
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(llm);
 
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
 
-        loadingBar = (ProgressBar) rootView.findViewById(R.id.loading_bar);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

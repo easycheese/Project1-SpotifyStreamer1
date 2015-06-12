@@ -7,6 +7,9 @@ import android.widget.TextView;
 
 import com.companionfree.nanodegree.project1.R;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 
 /**
  * Created by Kyle on 6/3/2015
@@ -14,20 +17,16 @@ import com.companionfree.nanodegree.project1.R;
 public class GenericViewHolder extends RecyclerView.ViewHolder {
 
     public View recyclerViewRow;
-    public ImageView albumImage;
-    public TextView line1;
-    public TextView line2;
+
+    @InjectView(R.id.record_row_image) public ImageView albumImage;
+    @InjectView(R.id.record_row_holder_line1) public TextView line1;
+    @InjectView(R.id.record_row_holder_line2) public TextView line2;
 
     public GenericViewHolder(View itemView) {
         super(itemView);
 
         recyclerViewRow = itemView;
-        albumImage = (ImageView) itemView.findViewById(R.id.record_row_image);
-        line1 = (TextView) itemView.findViewById(R.id.record_row_holder_line1);
-        line2 = (TextView) itemView.findViewById(R.id.record_row_holder_line2);
+        ButterKnife.inject(this, itemView);
 
     }
-
-
-
 }

@@ -10,19 +10,21 @@ import android.view.MenuItem;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 /**
  * Created by Kyle on 6/5/2015
  */
 public class ArtistActivity extends AppCompatActivity{
 
-    private Toolbar toolbar;
+    @InjectView(R.id.toolbar) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.inject(this);
 
         Intent i = getIntent();
         String artistName = i.getStringExtra(TopSongsFragment.ARTIST_NAME);

@@ -41,6 +41,8 @@ import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Image;
@@ -57,27 +59,23 @@ public class SingleSongFragment extends Fragment {
     private CustomTrack track;
     private SpotifyService spotifyService;
     private AsyncTask searchTask;
-    private ProgressBar loadingBar;
-    private ImageView albumImage;
-    private SeekBar progressBar;
 
-    private ImageButton previous;
-    private FloatingActionButton play;
-    private ImageButton next;
+    @InjectView(R.id.loading_bar) ProgressBar loadingBar;
+    @InjectView(R.id.song_image) ImageView albumImage;
+    @InjectView(R.id.song_progress) SeekBar progressBar;
+
+    @InjectView(R.id.media_previous) ImageButton previous;
+    @InjectView(R.id.media_play) FloatingActionButton play;
+    @InjectView(R.id.media_next) ImageButton next;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_song, container, false);
-        loadingBar = (ProgressBar) rootView.findViewById(R.id.loading_bar);
-        albumImage = (ImageView) rootView.findViewById(R.id.song_image);
-        progressBar = (SeekBar) rootView.findViewById(R.id.song_progress);
-        TextView title = (TextView) rootView.findViewById(R.id.song_title2);
+        ButterKnife.inject(this, rootView);
 
-        previous = (ImageButton) rootView.findViewById(R.id.media_previous);
-        play = (FloatingActionButton) rootView.findViewById(R.id.media_play);
-        next = (ImageButton) rootView.findViewById(R.id.media_next);
+        TextView title = (TextView) rootView.findViewById(R.id.song_title2);
         TextView endTime = (TextView) rootView.findViewById(R.id.time_end);
 
         SpotifyApi api = new SpotifyApi();
