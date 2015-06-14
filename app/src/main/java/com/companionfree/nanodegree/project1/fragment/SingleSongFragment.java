@@ -1,5 +1,10 @@
 package com.companionfree.nanodegree.project1.fragment;
 
+import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -13,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -37,6 +43,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
+import com.companionfree.nanodegree.project1.service.PlaybackService;
 import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
@@ -172,6 +179,9 @@ public class SingleSongFragment extends Fragment {
             @Override
             protected Void doInBackground(Void... params) {
                 //TODO dl music/start stream
+                Intent i = new Intent(getActivity(), PlaybackService.class);
+                i.setAction(PlaybackService.ACTION_PLAY);
+                getActivity().startService(i);
                 return null;
             }
 

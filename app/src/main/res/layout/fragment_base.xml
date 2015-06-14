@@ -51,4 +51,12 @@
 
             />
     </LinearLayout>
+
+    <!--TODO remove-->
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/kill"
+        android:text="Kill Service"
+        />
 </RelativeLayout>

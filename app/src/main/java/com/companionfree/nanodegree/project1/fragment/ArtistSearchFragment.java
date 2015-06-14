@@ -3,6 +3,7 @@ package com.companionfree.nanodegree.project1.fragment;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.input.InputManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,10 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
+import com.companionfree.nanodegree.project1.service.PlaybackService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -64,6 +67,15 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
 
+        // TODO remove
+        Button b = (Button) rootView.findViewById(R.id.kill);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), PlaybackService.class);
+                getActivity().stopService(i);
+            }
+        });
 
         return rootView;
     }
@@ -152,6 +164,11 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         } else {
             displayError(R.string.error_no_search_text, true);
         }
+
+        //TODO remove for final
+        Intent i = new Intent(getActivity(), PlaybackService.class);
+        i.setAction(PlaybackService.ACTION_PLAY);
+        getActivity().startService(i);
     }
 
     @Override
