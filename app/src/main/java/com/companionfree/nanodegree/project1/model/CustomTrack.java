@@ -17,6 +17,7 @@ import kaaes.spotify.webapi.android.models.Track;
  */
 public class CustomTrack extends Track {
 
+    public static final String SONG_URL = "song_uri";
     private int paletteColor = R.color.color_primary;
 
     public CustomTrack(Track track) {
@@ -25,6 +26,7 @@ public class CustomTrack extends Track {
         this.duration_ms = track.duration_ms;
         this.id = track.id;
         this.name = track.name;
+        this.preview_url = track.preview_url;
 
     }
 

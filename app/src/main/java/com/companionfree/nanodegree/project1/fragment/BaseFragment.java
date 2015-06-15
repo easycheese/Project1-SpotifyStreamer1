@@ -67,7 +67,7 @@ public class BaseFragment extends Fragment {
             searchTask = null;
         }
     }
-    protected void displayError(int stringId, boolean statusOnly) { // TODO this isn't working right
+    protected void displayError(int stringId, boolean statusOnly) {
         recyclerView.setVisibility(View.GONE);
         errorBlock.setVisibility(View.VISIBLE);
         errorText.setText(getActivity().getString(stringId));

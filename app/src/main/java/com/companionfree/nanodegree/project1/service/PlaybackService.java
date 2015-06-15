@@ -11,8 +11,12 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.util.Log;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.model.CustomTrack;
+
+import java.io.IOException;
 
 /**
  * Created by Kyle on 6/13/2015
@@ -27,14 +31,28 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
     public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
         if (action.equals(ACTION_PLAY)) {
+
+            String trackUrl = intent.getStringExtra(CustomTrack.SONG_URL);
+            Log.d("Spotify", "Song url: " + trackUrl);
+
             mMediaPlayer = new MediaPlayer(); // initialize it here
             mMediaPlayer.setOnPreparedListener(this);
-//            mMediaPlayer.prepareAsync(); // TODO prepare async to not block main thread
+
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                mMediaPlayer.setDataSource(trackUrl);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
             WifiManager.WifiLock wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
                     .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
 
             wifiLock.acquire();
+
+
+            mMediaPlayer.prepareAsync(); // TODO prepare async to not block main thread
 
 
             String songName;
@@ -89,6 +107,7 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
 
     /** Called when MediaPlayer is ready */
         public void onPrepared(MediaPlayer player) {
+            Log.d("Spotify", "MediaPlayer Starting");
             player.start();
         }
 
@@ -96,6 +115,8 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
     public boolean onError(MediaPlayer mp, int what, int extra) {
         // ... react appropriately ...
         // The MediaPlayer has moved to the Error state, must be reset!
+        Log.d("Spotify", "MediaPlayer Error, resetting");
+        mp.reset();
         return false;
     }
 

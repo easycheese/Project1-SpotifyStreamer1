@@ -101,6 +101,7 @@ public class TopSongsFragment extends BaseFragment{
                 Map<String, Object> options = new HashMap<>();
                 options.put("country", "US");
                 Tracks results = spotifyService.getArtistTopTrack(artistId, options);
+
                 List<Track> resultTracks = results.tracks;
                 tracks.clear();
 
