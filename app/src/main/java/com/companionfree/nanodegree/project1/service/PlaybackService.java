@@ -28,10 +28,15 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         MediaPlayer mMediaPlayer = null;
         private static final int NOTIFICATION_ID = 355;
 
+        private static String trackUrl;
+
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String trackUrl = intent.getStringExtra(CustomTrack.SONG_URL);
+        String trackUrlTemp = intent.getStringExtra(CustomTrack.SONG_URL);
+        if (trackUrlTemp != null) {
+            trackUrl = trackUrlTemp;
+        }
         Log.d("Spotify", "Song url: " + trackUrl);
 
 
@@ -42,13 +47,17 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         }
 
         if (mMediaPlayer == null) {
-            setupService(trackUrl);
+            setupService();
 
         }
 
         if (action.equals(ACTION_PLAY)) {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause(); //TODO need to store pause state
+            } else {
+                mMediaPlayer.prepareAsync();
+            }
 
-            mMediaPlayer.prepareAsync();
 
         } else if (action.equals(ACTION_NEXT)) {
             if (mMediaPlayer != null) {
@@ -65,7 +74,7 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         return START_NOT_STICKY;
     }
 
-    private void setupService(String trackUrl) {
+    private void setupService() {
         mMediaPlayer = new MediaPlayer(); // initialize it here
         mMediaPlayer.setOnPreparedListener(this);
 
@@ -92,9 +101,9 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            builder.addAction(R.mipmap.ic_launcher, "first", getPendingIntent(ACTION_PLAY));
-            builder.addAction(R.mipmap.ic_launcher, "second", getPendingIntent(ACTION_PREV));
-            builder.addAction(R.mipmap.ic_launcher, "third", getPendingIntent(ACTION_NEXT));
+            builder.addAction(R.mipmap.ic_skip_previous_black_36dp, null, getPendingIntent(ACTION_PREV));
+            builder.addAction(R.mipmap.ic_play_arrow_black_36dp, null, getPendingIntent(ACTION_PLAY));
+            builder.addAction(R.mipmap.ic_skip_next_black_36dp, null, getPendingIntent(ACTION_NEXT));
         }
 
         Notification notification = builder.build();
@@ -119,8 +128,8 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
     private PendingIntent getPendingIntent(String action) {
         Intent i = new Intent(getApplicationContext(), getClass());
         i.setAction(action);
-        return PendingIntent.getActivity(getApplicationContext(), 0,
-                        i, 0);
+        return PendingIntent.getService(getApplicationContext(), 0,
+                i, 0);
     }
     @Override
     public void onDestroy() {
