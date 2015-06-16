@@ -23,77 +23,104 @@ import java.io.IOException;
  */
 public class PlaybackService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener{
         public static final String ACTION_PLAY = "com.companionfree.nanodegree.project1.action.PLAY";
+        public static final String ACTION_PREV = "com.companionfree.nanodegree.project1.action.PREV";
+        public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
         MediaPlayer mMediaPlayer = null;
         private static final int NOTIFICATION_ID = 355;
 
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+        String trackUrl = intent.getStringExtra(CustomTrack.SONG_URL);
+        Log.d("Spotify", "Song url: " + trackUrl);
+
+
         String action = intent.getAction();
+
+        if (action == null) {
+            return START_NOT_STICKY;
+        }
+
+        if (mMediaPlayer == null) {
+            setupService(trackUrl);
+
+        }
+
         if (action.equals(ACTION_PLAY)) {
 
-            String trackUrl = intent.getStringExtra(CustomTrack.SONG_URL);
-            Log.d("Spotify", "Song url: " + trackUrl);
+            mMediaPlayer.prepareAsync();
 
-            mMediaPlayer = new MediaPlayer(); // initialize it here
-            mMediaPlayer.setOnPreparedListener(this);
-
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            try {
-                mMediaPlayer.setDataSource(trackUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
+        } else if (action.equals(ACTION_NEXT)) {
+            if (mMediaPlayer != null) {
+                mMediaPlayer.stop();
             }
 
-            mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
-            WifiManager.WifiLock wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
-                    .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
-
-            wifiLock.acquire();
-
-
-            mMediaPlayer.prepareAsync(); // TODO prepare async to not block main thread
-
-
-            String songName;
-            // assign the song name to songName
-            PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-                    new Intent(getApplicationContext(), intent.getClass()),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            Notification.Builder builder = new Notification.Builder(getApplicationContext());
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                builder.addAction(R.mipmap.ic_launcher, "first", null);
-                builder.addAction(R.mipmap.ic_launcher, "second", null);
-                builder.addAction(R.mipmap.ic_launcher, "third", null);
+        } else if (action.equals(ACTION_PREV)) {
+            if (mMediaPlayer != null) {
+                mMediaPlayer.stop();
             }
-
-            Notification notification = builder.build();
-            notification.tickerText = "text";
-            notification.icon = R.mipmap.ic_launcher;
-
-            Notification.Action[] actions = new Notification.Action[2];
-
-            notification.flags |= Notification.FLAG_ONGOING_EVENT;
-            notification.setLatestEventInfo(getApplicationContext(), "MusicPlayerSample",
-                    "Playing: " + "name", pi);
-            startForeground(NOTIFICATION_ID, notification);
-
-
-
-
-            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-                    AudioManager.AUDIOFOCUS_GAIN);
-
-            if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                // could not get audio focus.
-            }
-
         }
 
 
         return START_NOT_STICKY;
+    }
+
+    private void setupService(String trackUrl) {
+        mMediaPlayer = new MediaPlayer(); // initialize it here
+        mMediaPlayer.setOnPreparedListener(this);
+
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try {
+            mMediaPlayer.setDataSource(trackUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
+        WifiManager.WifiLock wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
+                .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
+
+        wifiLock.acquire();
+
+        String songName;
+        // assign the song name to songName
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+                new Intent(getApplicationContext(), getClass()),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            builder.addAction(R.mipmap.ic_launcher, "first", getPendingIntent(ACTION_PLAY));
+            builder.addAction(R.mipmap.ic_launcher, "second", getPendingIntent(ACTION_PREV));
+            builder.addAction(R.mipmap.ic_launcher, "third", getPendingIntent(ACTION_NEXT));
+        }
+
+        Notification notification = builder.build();
+        notification.tickerText = "text";
+        notification.icon = R.mipmap.ic_launcher;
+
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.setLatestEventInfo(getApplicationContext(),
+                getApplicationContext().getString(R.string.app_name),
+                "Playing: " + "name", pi);
+        startForeground(NOTIFICATION_ID, notification);
+
+
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN);
+
+        if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            // could not get audio focus.
+        }
+    }
+    private PendingIntent getPendingIntent(String action) {
+        Intent i = new Intent(getApplicationContext(), getClass());
+        i.setAction(action);
+        return PendingIntent.getActivity(getApplicationContext(), 0,
+                        i, 0);
     }
     @Override
     public void onDestroy() {

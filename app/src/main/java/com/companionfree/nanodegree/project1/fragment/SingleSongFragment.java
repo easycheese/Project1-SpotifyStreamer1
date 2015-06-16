@@ -40,7 +40,7 @@ import kaaes.spotify.webapi.android.models.Image;
 /**
  * Created by Kyle on 6/6/2015
  */
-public class SingleSongFragment extends Fragment {
+public class SingleSongFragment extends Fragment implements View.OnClickListener{
 
     public static final String TRACK = "track_info";
 
@@ -100,6 +100,9 @@ public class SingleSongFragment extends Fragment {
             d.setColorFilter(track.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
             DrawableCompat.setTint(d, track.getPaletteColor());
         }
+        play.setOnClickListener(this);
+        previous.setOnClickListener(this);
+        next.setOnClickListener(this);
 
         return rootView;
     }
@@ -161,10 +164,6 @@ public class SingleSongFragment extends Fragment {
         return new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                Intent i = new Intent(getActivity(), PlaybackService.class);
-                i.setAction(PlaybackService.ACTION_PLAY);
-                i.putExtra(CustomTrack.SONG_URL, track.preview_url);
-                getActivity().startService(i);
 
                 return null;
             }
@@ -181,5 +180,23 @@ public class SingleSongFragment extends Fragment {
             searchTask.cancel(true);
             searchTask = null;
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        int id = v.getId();
+        String action = null;
+        if (id == play.getId()) {
+            action = PlaybackService.ACTION_PLAY;
+        } else if (id == previous.getId()) {
+            action = PlaybackService.ACTION_PREV;
+        } else if (id == next.getId()) {
+            action = PlaybackService.ACTION_NEXT;
+        }
+        Intent i = new Intent(getActivity(), PlaybackService.class);
+        i.setAction(action);
+        i.putExtra(CustomTrack.SONG_URL, track.preview_url);
+        getActivity().startService(i);
     }
 }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
@@ -66,6 +67,7 @@ public class TrackAdapter extends RecyclerView.Adapter<GenericViewHolder> implem
                             return false;
                         }
                     })
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(viewHolder.albumImage);
         }
 
