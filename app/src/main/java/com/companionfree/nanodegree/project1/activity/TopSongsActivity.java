@@ -41,7 +41,7 @@ public class TopSongsActivity extends AppCompatActivity{
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, new TopSongsFragment())
+                    .replace(R.id.top_songs_list_container, new TopSongsFragment())
                     .commit();
         }
     }

@@ -1,8 +1,6 @@
 package com.companionfree.nanodegree.project1.activity;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -10,10 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.companionfree.nanodegree.project1.BuildConfig;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.SingleSongFragment;
-import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.google.gson.Gson;
 
@@ -53,7 +49,7 @@ public class SongActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content_frame, new SingleSongFragment())
+                    .replace(R.id.top_songs_list_container, new SingleSongFragment())
                     .commit();
         }
 

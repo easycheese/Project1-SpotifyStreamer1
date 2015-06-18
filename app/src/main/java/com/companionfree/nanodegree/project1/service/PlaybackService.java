@@ -92,7 +92,7 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         wifiLock.acquire();
 
         String songName;
-        // assign the song name to songName
+        // assign the song artistName to songName
         PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
                 new Intent(getApplicationContext(), getClass()),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -113,7 +113,7 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
         notification.setLatestEventInfo(getApplicationContext(),
                 getApplicationContext().getString(R.string.app_name),
-                "Playing: " + "name", pi);
+                "Playing: " + "artistName", pi);
         startForeground(NOTIFICATION_ID, notification);
 
 

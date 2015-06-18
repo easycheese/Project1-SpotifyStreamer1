@@ -1,5 +1,6 @@
 package com.companionfree.nanodegree.project1.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -127,4 +128,7 @@ public class TopSongsFragment extends BaseFragment{
             }
         };
     }
+
+
+
 }
