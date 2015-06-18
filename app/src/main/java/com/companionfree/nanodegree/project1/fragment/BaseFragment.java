@@ -47,8 +47,6 @@ public class BaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-
         rootView = inflater.inflate(R.layout.fragment_base, container, false);
         ButterKnife.inject(this, rootView);
 

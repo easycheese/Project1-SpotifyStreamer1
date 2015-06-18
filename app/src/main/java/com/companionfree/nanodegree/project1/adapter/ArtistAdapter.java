@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.activity.ArtistActivity;
+import com.companionfree.nanodegree.project1.activity.TopSongsActivity;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.GenericViewHolder;
 
@@ -55,7 +55,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<GenericViewHolder> imple
             @Override
             public void onClick(View v) {
                 Context ctx = viewHolder.recyclerViewRow.getContext();
-                Intent i = new Intent(ctx, ArtistActivity.class);
+                Intent i = new Intent(ctx, TopSongsActivity.class);
                 i.putExtra(TopSongsFragment.ARTIST_NAME, artist.name);
                 i.putExtra(TopSongsFragment.ARTIST_ID, artist.id);
                 ctx.startActivity(i);

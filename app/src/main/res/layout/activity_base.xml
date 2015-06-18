@@ -1,24 +1,5 @@
-
-
-<RelativeLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_height="match_parent"
-android:layout_width="match_parent"
-android:orientation="vertical"
-
-    >
-<FrameLayout
-    android:id="@+id/content_frame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="?attr/actionBarSize"
-    />
-
-    <include layout="@layout/my_toolbar"
-        android:id="@+id/toolbar"
-        />
-
-
-
-
-</RelativeLayout>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    tools:context=".ArtistSearchFragment"      />

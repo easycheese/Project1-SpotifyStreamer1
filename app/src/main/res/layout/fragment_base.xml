@@ -1,7 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     >
 
     <ProgressBar
@@ -20,6 +19,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingTop="?attr/actionBarSize"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:id="@+id/recyclerview_searchresults"/>
@@ -52,11 +52,18 @@
             />
     </LinearLayout>
 
+
+    <include layout="@layout/my_toolbar"
+        android:id="@+id/toolbar"
+        />
+
+
     <!--TODO remove-->
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/kill"
         android:text="Kill Service"
+        android:layout_marginTop="50dp"
         />
 </RelativeLayout>

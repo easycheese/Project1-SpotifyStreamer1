@@ -16,7 +16,7 @@ import butterknife.InjectView;
 /**
  * Created by Kyle on 6/5/2015
  */
-public class ArtistActivity extends AppCompatActivity{
+public class TopSongsActivity extends AppCompatActivity{
 
     @InjectView(R.id.toolbar) Toolbar toolbar;
 
