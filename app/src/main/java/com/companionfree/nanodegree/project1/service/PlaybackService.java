@@ -14,9 +14,13 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
+import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 
 import java.io.IOException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Kyle on 6/13/2015
@@ -27,6 +31,11 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
         MediaPlayer mMediaPlayer = null;
         private static final int NOTIFICATION_ID = 355;
+
+         private static final int STATE_STOPPED = 0;
+         private static final int STATE_PAUSED = 1;
+
+        private static int mState = STATE_STOPPED;
 
         private static String trackUrl;
 
@@ -42,31 +51,35 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
 
         String action = intent.getAction();
 
-        if (action == null) {
-            return START_NOT_STICKY;
-        }
 
         if (mMediaPlayer == null) {
             setupService();
-
         }
 
         if (action.equals(ACTION_PLAY)) {
+            boolean playing = true;
             if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause(); //TODO need to store pause state
+                mMediaPlayer.pause();
+                mState = STATE_PAUSED;
+                playing = false;
+            } else if (mState == STATE_PAUSED) {
+                mMediaPlayer.start();
             } else {
                 mMediaPlayer.prepareAsync();
             }
 
+            EventBus.getDefault().post(new MusicStatusEvent(playing));
 
         } else if (action.equals(ACTION_NEXT)) {
             if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
+                mState = STATE_STOPPED;
             }
 
         } else if (action.equals(ACTION_PREV)) {
             if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
+                mState = STATE_STOPPED;
             }
         }
 
@@ -145,6 +158,7 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         public void onPrepared(MediaPlayer player) {
             Log.d("Spotify", "MediaPlayer Starting");
             player.start();
+
         }
 
     @Override
@@ -153,6 +167,7 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         // The MediaPlayer has moved to the Error state, must be reset!
         Log.d("Spotify", "MediaPlayer Error, resetting");
         mp.reset();
+        EventBus.getDefault().post(new MusicStatusEvent(false));
         return false;
     }
 

@@ -33,6 +33,7 @@ import java.util.Collection;
 import java.util.List;
 
 
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 
@@ -45,6 +46,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     private String searchState_Save = "search_state";
     private String searchText_Save = "search_text";
     private String searchKeyboardEnabled_Save = "search_keyboard_enabled";
+
 
 
     private List<Artist> artists;
@@ -91,7 +93,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     }
 
     private void setupToolbar() {
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setTitle(getString(R.string.app_name));
         Menu menu = toolbar.getMenu();

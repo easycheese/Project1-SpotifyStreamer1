@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,7 @@ public class BaseFragment extends Fragment {
     @InjectView(R.id.error_text) protected TextView errorText;
     @InjectView(R.id.error_block) protected LinearLayout errorBlock;
     @InjectView(R.id.error_image) protected ImageView errorImage;
-
+    @InjectView(R.id.toolbar) protected Toolbar toolbar;
     protected View rootView;
 
     protected String resultsSave = "results";

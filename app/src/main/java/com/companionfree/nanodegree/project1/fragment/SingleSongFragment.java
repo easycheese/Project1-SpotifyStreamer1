@@ -22,10 +22,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
+import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
 import com.google.gson.Gson;
 
@@ -33,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.greenrobot.event.EventBus;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Image;
@@ -181,7 +185,25 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
             searchTask = null;
         }
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    // This method will be called when a MusicStatusEvent is posted
+    public void onEvent(MusicStatusEvent event){
+
+        int id = (event.isPlaying) ? R.mipmap.ic_pause_black_24dp : R.mipmap.ic_play_arrow_black_24dp;
+        play.setImageResource(id);
+
+    }
     @Override
     public void onClick(View v) {
 

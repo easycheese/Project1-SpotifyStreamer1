@@ -1,10 +1,17 @@
 package com.companionfree.nanodegree.project1.fragment;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.ButterKnife;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
 
@@ -44,14 +52,22 @@ public class TopSongsFragment extends BaseFragment{
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
+        setupToolbar();
+
         tracks = new ArrayList<>();
         trackAdapter = new TrackAdapter(tracks);
         recyclerView.setAdapter(trackAdapter);
 
-        Intent i = getActivity().getIntent();
-        artistId = i.getStringExtra(ARTIST_ID);
+        Bundle bundle = getArguments();
+        artistId = bundle.getString(ARTIST_ID);
+
+        toolbar.setTitle(bundle.getString(ARTIST_NAME));
 
         return rootView;
+    }
+    private void setupToolbar() {
+
+
     }
 
     @Override

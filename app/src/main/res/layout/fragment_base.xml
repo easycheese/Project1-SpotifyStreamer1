@@ -3,10 +3,15 @@
     android:layout_height="match_parent"
     >
 
+    <include layout="@layout/my_toolbar"
+        android:id="@+id/toolbar"
+        />
+
     <ProgressBar
         android:id="@+id/loading_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -19,7 +24,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="?attr/actionBarSize"
+        android:layout_below="@id/toolbar"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:id="@+id/recyclerview_searchresults"/>
@@ -28,6 +33,7 @@
         android:id="@+id/error_block"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
         android:layout_marginTop="@dimen/error_margin_top"
@@ -53,9 +59,7 @@
     </LinearLayout>
 
 
-    <include layout="@layout/my_toolbar"
-        android:id="@+id/toolbar"
-        />
+
 
 
     <!--TODO remove-->
@@ -64,6 +68,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/kill"
         android:text="Kill Service"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="?attr/actionBarSize"
         />
 </RelativeLayout>

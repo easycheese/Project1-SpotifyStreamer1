@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 
@@ -26,6 +27,13 @@ public class MainSearchActivity extends AppCompatActivity  {
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+
+            ArtistSearchFragment fragment = new ArtistSearchFragment();
+//            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.top_songs_list_container, fragment)
+                    .commit();
+
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
@@ -49,10 +57,17 @@ public class MainSearchActivity extends AppCompatActivity  {
 
     // This method will be called when a ArtistClickEvent is posted
     public void onEvent(ArtistClickEvent event){
-        Intent i = new Intent(this, TopSongsActivity.class);
-        i.putExtra(TopSongsFragment.ARTIST_NAME, event.artistName);
-        i.putExtra(TopSongsFragment.ARTIST_ID, event.artistId);
-        startActivity(i);
+        Bundle bundle = new Bundle();
+        bundle.putString(TopSongsFragment.ARTIST_NAME, event.artistName);
+        bundle.putString(TopSongsFragment.ARTIST_ID, event.artistId);
+
+        TopSongsFragment fragment = new TopSongsFragment();
+
+        fragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.top_songs_list_container, fragment)
+                .commit();
+
     }
 
 }
