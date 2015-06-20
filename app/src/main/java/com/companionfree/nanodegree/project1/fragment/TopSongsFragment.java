@@ -1,22 +1,13 @@
 package com.companionfree.nanodegree.project1.fragment;
 
-import android.app.Activity;
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.adapter.TrackAdapter;
+import com.companionfree.nanodegree.project1.adapter.TopSongsAdapter;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -28,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.ButterKnife;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
 
@@ -39,7 +29,7 @@ import kaaes.spotify.webapi.android.models.Tracks;
 public class TopSongsFragment extends BaseFragment{
 
     private List<CustomTrack> tracks;
-    private TrackAdapter trackAdapter;
+    private TopSongsAdapter topSongsAdapter;
 
     private String artistId;
 
@@ -55,8 +45,8 @@ public class TopSongsFragment extends BaseFragment{
         setupToolbar();
 
         tracks = new ArrayList<>();
-        trackAdapter = new TrackAdapter(tracks);
-        recyclerView.setAdapter(trackAdapter);
+        topSongsAdapter = new TopSongsAdapter(tracks);
+        recyclerView.setAdapter(topSongsAdapter);
 
         Bundle bundle = getArguments();
         artistId = bundle.getString(ARTIST_ID);
@@ -135,7 +125,7 @@ public class TopSongsFragment extends BaseFragment{
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                trackAdapter.notifyDataSetChanged();
+                topSongsAdapter.notifyDataSetChanged();
                 loadingBar.setVisibility(View.GONE);
 
                 if (tracks != null && tracks.isEmpty()) {

@@ -10,10 +10,10 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +22,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
+import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -39,18 +39,18 @@ import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Image;
 
 /**
  * Created by Kyle on 6/6/2015
  */
 public class SingleSongFragment extends Fragment implements View.OnClickListener{
 
-    public static final String TRACK = "track_info";
+    public static final String PLAYLIST = "playlist";
 
-    protected String resultsSave = "track";
+    protected String resultsSave = "currentTrack";
 
-    private CustomTrack track;
+    private Playlist playList;
+    private CustomTrack currentTrack;
     private SpotifyService spotifyService;
     private AsyncTask searchTask;
 
@@ -75,17 +75,16 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
 
-        Intent i = getActivity().getIntent();
-        String trackJson = i.getStringExtra(TRACK);
-        track = new Gson().fromJson(trackJson, CustomTrack.class);
+        playList =  getActivity().getIntent().getExtras().getParcelable(PLAYLIST);
+        currentTrack = playList.getCurrentTrack();
 
-        title.setText(track.name);
-        endTime.setText(getTimeString(track.duration_ms));
-        progressBar.setMax((int) track.duration_ms);
+        title.setText(currentTrack.trackName);
+        endTime.setText(getTimeString(currentTrack.duration));
+        progressBar.setMax((int) currentTrack.duration);
 
-        progressBar.getProgressDrawable().setColorFilter(track.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
+        progressBar.getProgressDrawable().setColorFilter(currentTrack.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
 
-        play.setRippleColor(track.getPaletteColor());
+        play.setRippleColor(currentTrack.getPaletteColor());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             int[][] states = new int[][] {
@@ -93,7 +92,7 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
             };
 
             int[] colors = new int[] {
-                    track.getPaletteColor()
+                    currentTrack.getPaletteColor()
             };
 
             ColorStateList myList = new ColorStateList(states, colors);
@@ -101,8 +100,8 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
 
         } else {
             Drawable d = DrawableCompat.wrap(progressBar.getThumb());
-            d.setColorFilter(track.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
-            DrawableCompat.setTint(d, track.getPaletteColor());
+            d.setColorFilter(currentTrack.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
+            DrawableCompat.setTint(d, currentTrack.getPaletteColor());
         }
         play.setOnClickListener(this);
         previous.setOnClickListener(this);
@@ -121,7 +120,7 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        String json = new Gson().toJson(track);
+        String json = new Gson().toJson(currentTrack);
         outState.putString(resultsSave, json);
         super.onSaveInstanceState(outState);
     }
@@ -130,16 +129,15 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (!track.album.images.isEmpty()) {
-            Image image = track.album.images.get(0);
-            Glide.with(getActivity()).load(image.url)
+        if (!currentTrack.albumName.equals(CustomTrack.ALBUM_EMPTY)) {
+            Glide.with(getActivity()).load(currentTrack.albumURL)
                     .fitCenter()
                     .into(albumImage);
         }
 
         if (savedInstanceState != null) {
             String results = savedInstanceState.getString(resultsSave);
-            track = new Gson().fromJson(results, CustomTrack.class);
+            currentTrack = new Gson().fromJson(results, CustomTrack.class);
         } else {
             executeSearch();
         }
@@ -218,7 +216,7 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
         }
         Intent i = new Intent(getActivity(), PlaybackService.class);
         i.setAction(action);
-        i.putExtra(CustomTrack.SONG_URL, track.preview_url);
+        i.putExtra(SingleSongFragment.PLAYLIST, playList);
         getActivity().startService(i);
     }
 }

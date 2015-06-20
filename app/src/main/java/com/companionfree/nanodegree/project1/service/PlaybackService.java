@@ -9,44 +9,43 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
+import com.companionfree.nanodegree.project1.fragment.SingleSongFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
+import com.companionfree.nanodegree.project1.model.Playlist;
+import com.companionfree.nanodegree.project1.util.SpotifyMediaPlayer;
 
 import java.io.IOException;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
 /**
  * Created by Kyle on 6/13/2015
  */
-public class PlaybackService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener{
+public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPreparedListener,
+        SpotifyMediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener{
         public static final String ACTION_PLAY = "com.companionfree.nanodegree.project1.action.PLAY";
         public static final String ACTION_PREV = "com.companionfree.nanodegree.project1.action.PREV";
         public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
-        MediaPlayer mMediaPlayer = null;
+        SpotifyMediaPlayer mMediaPlayer = null;
         private static final int NOTIFICATION_ID = 355;
 
-         private static final int STATE_STOPPED = 0;
-         private static final int STATE_PAUSED = 1;
-
-        private static int mState = STATE_STOPPED;
-
-        private static String trackUrl;
+        private Playlist playList;
 
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        String trackUrlTemp = intent.getStringExtra(CustomTrack.SONG_URL);
-        if (trackUrlTemp != null) {
-            trackUrl = trackUrlTemp;
-        }
-        Log.d("Spotify", "Song url: " + trackUrl);
+
+        Bundle bundle = intent.getExtras();
+        playList = bundle.getParcelable(SingleSongFragment.PLAYLIST);
+        Log.d("Spotify", "Song url: " + playList.getCurrentTrack().trackName);
 
 
         String action = intent.getAction();
@@ -60,9 +59,8 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
             boolean playing = true;
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.pause();
-                mState = STATE_PAUSED;
                 playing = false;
-            } else if (mState == STATE_PAUSED) {
+            } else if (mMediaPlayer.isPaused()) {
                 mMediaPlayer.start();
             } else {
                 mMediaPlayer.prepareAsync();
@@ -73,13 +71,15 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
         } else if (action.equals(ACTION_NEXT)) {
             if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
-                mState = STATE_STOPPED;
+                playList.skipNext();
+                setupService(); // TODO parse out different function
             }
 
         } else if (action.equals(ACTION_PREV)) {
             if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
-                mState = STATE_STOPPED;
+                playList.skipPrevious();
+                setupService(); // TODO parse out different function
             }
         }
 
@@ -88,12 +88,12 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
     }
 
     private void setupService() {
-        mMediaPlayer = new MediaPlayer(); // initialize it here
+        mMediaPlayer = new SpotifyMediaPlayer(); // initialize it here
         mMediaPlayer.setOnPreparedListener(this);
 
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            mMediaPlayer.setDataSource(trackUrl);
+            mMediaPlayer.setDataSource(playList.getCurrentTrack().previewURL);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -203,4 +203,6 @@ public class PlaybackService extends Service implements MediaPlayer.OnPreparedLi
                 break;
         }
     }
+
+
 }

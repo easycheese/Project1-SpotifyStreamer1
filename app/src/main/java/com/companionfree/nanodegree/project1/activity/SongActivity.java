@@ -1,6 +1,5 @@
 package com.companionfree.nanodegree.project1.activity;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -11,7 +10,9 @@ import android.view.MenuItem;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.SingleSongFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
-import com.google.gson.Gson;
+import com.companionfree.nanodegree.project1.model.Playlist;
+
+import java.util.List;
 
 /**
  * Created by Kyle on 6/6/2015
@@ -22,9 +23,8 @@ public class SongActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent i = getIntent();
-        String trackJson = i.getStringExtra(SingleSongFragment.TRACK);
-        CustomTrack track = new Gson().fromJson(trackJson, CustomTrack.class);
+        Playlist playlist = getIntent().getExtras().getParcelable(SingleSongFragment.PLAYLIST);
+        CustomTrack track = playlist.getCurrentTrack();
 
         setContentView(R.layout.activity_base);
 
@@ -37,8 +37,8 @@ public class SongActivity extends AppCompatActivity {
 
 
 
-        toolbar.setTitle(track.artists.get(0).name);
-        toolbar.setSubtitle(track.album.name);
+        toolbar.setTitle(track.artistName);
+        toolbar.setSubtitle(track.albumName);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

@@ -2,6 +2,7 @@ package com.companionfree.nanodegree.project1.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +19,20 @@ import com.companionfree.nanodegree.project1.activity.SongActivity;
 import com.companionfree.nanodegree.project1.fragment.SingleSongFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.GenericViewHolder;
+import com.companionfree.nanodegree.project1.model.Playlist;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Image;
 
 
-public class TrackAdapter extends RecyclerView.Adapter<GenericViewHolder> implements View.OnClickListener{
+public class TopSongsAdapter extends RecyclerView.Adapter<GenericViewHolder> implements View.OnClickListener{
 
     private List<CustomTrack> trackList;
 
-    public TrackAdapter(List<CustomTrack> trngRecords) {
+    public TopSongsAdapter(List<CustomTrack> trngRecords) {
         this.trackList = trngRecords;
 
     }
@@ -48,13 +51,12 @@ public class TrackAdapter extends RecyclerView.Adapter<GenericViewHolder> implem
     public void onBindViewHolder(final GenericViewHolder viewHolder, final int i) {
         final CustomTrack track = trackList.get(i);
 
-        viewHolder.line1.setText(track.name);
-        viewHolder.line2.setText(track.album.name);
+        viewHolder.line1.setText(track.trackName);
+        viewHolder.line2.setText(track.albumName);
 
 
-        if (!track.album.images.isEmpty()) {
-            Image image = track.album.images.get(0);
-            Glide.with(viewHolder.albumImage.getContext()).load(image.url)
+        if (!track.albumURL.equals(CustomTrack.ALBUM_EMPTY)) {
+            Glide.with(viewHolder.albumImage.getContext()).load(track.albumURL)
                     .centerCrop()
                     .listener(new RequestListener<String, GlideDrawable>() {
                         @Override
@@ -76,9 +78,11 @@ public class TrackAdapter extends RecyclerView.Adapter<GenericViewHolder> implem
             @Override
             public void onClick(View v) {
                 Context ctx = viewHolder.recyclerViewRow.getContext(); //TODO convert to postEvent
-                Intent i = new Intent(ctx, SongActivity.class);
-                i.putExtra(SingleSongFragment.TRACK, new Gson().toJson(track));
-                ctx.startActivity(i);
+                Playlist playlist = new Playlist(trackList, i);
+
+                Intent intent = new Intent(ctx, SongActivity.class);
+                intent.putExtra(SingleSongFragment.PLAYLIST, playlist);
+                ctx.startActivity(intent);
 
 //                PopupWindow popUp = new PopupWindow(viewHolder.recyclerViewRow.getContext());
 //                popUp.showAtLocation(layout, Gravity.BOTTOM, 10, 10);

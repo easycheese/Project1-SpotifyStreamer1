@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.graphics.Palette;
 
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
@@ -15,18 +17,35 @@ import kaaes.spotify.webapi.android.models.Track;
 /**
  * Created by Kyle on 6/6/2015
  */
-public class CustomTrack extends Track {
+public class CustomTrack implements Parcelable {
 
-    public static final String SONG_URL = "song_uri";
+//    public static final String SONG_URL = "song_uri";
     private int paletteColor = R.color.color_primary;
 
+    public String albumName;
+    public String albumURL;
+    public String artistName;
+    public long duration;
+    public String id;
+    public String trackName;
+    public String previewURL;
+
+    public static final String ALBUM_EMPTY = "empty";
+
     public CustomTrack(Track track) {
-        this.album = track.album;
-        this.artists = track.artists;
-        this.duration_ms = track.duration_ms;
+        this.albumName = track.album.name;
+        this.artistName = track.artists.get(0).name;
+        this.duration = track.duration_ms;
         this.id = track.id;
-        this.name = track.name;
-        this.preview_url = track.preview_url;
+        this.trackName = track.name;
+        this.previewURL = track.preview_url;
+
+        if (!track.album.images.isEmpty()) {
+            albumURL = track.album.images.get(0).url;
+        } else {
+            albumURL = ALBUM_EMPTY;
+        }
+
 
     }
 
@@ -68,4 +87,43 @@ public class CustomTrack extends Track {
        }).run();
 
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.paletteColor);
+        dest.writeString(this.albumName);
+        dest.writeString(this.albumURL);
+        dest.writeString(this.artistName);
+        dest.writeLong(this.duration);
+        dest.writeString(this.id);
+        dest.writeString(this.trackName);
+        dest.writeString(this.previewURL);
+    }
+
+    protected CustomTrack(Parcel in) {
+        this.paletteColor = in.readInt();
+        this.albumName = in.readString();
+        this.albumURL = in.readString();
+        this.artistName = in.readString();
+        this.duration = in.readLong();
+        this.id = in.readString();
+        this.trackName = in.readString();
+        this.previewURL = in.readString();
+    }
+
+    public static final Parcelable.Creator<CustomTrack> CREATOR = new Parcelable.Creator<CustomTrack>() {
+        public CustomTrack createFromParcel(Parcel source) {
+            return new CustomTrack(source);
+        }
+
+        public CustomTrack[] newArray(int size) {
+            return new CustomTrack[size];
+        }
+    };
 }
