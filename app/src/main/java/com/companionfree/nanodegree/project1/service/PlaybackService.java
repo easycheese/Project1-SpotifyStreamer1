@@ -15,14 +15,12 @@ import android.os.PowerManager;
 import android.util.Log;
 
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.fragment.SingleSongFragment;
-import com.companionfree.nanodegree.project1.model.CustomTrack;
+import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.util.SpotifyMediaPlayer;
 
 import java.io.IOException;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -44,7 +42,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Bundle bundle = intent.getExtras();
-        playList = bundle.getParcelable(SingleSongFragment.PLAYLIST);
+        playList = bundle.getParcelable(PlayerFragment.PLAYLIST);
         Log.d("Spotify", "Song url: " + playList.getCurrentTrack().trackName);
 
 

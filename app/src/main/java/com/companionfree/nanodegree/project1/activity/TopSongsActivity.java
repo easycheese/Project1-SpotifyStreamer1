@@ -8,10 +8,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
+import com.companionfree.nanodegree.project1.model.SongClickEvent;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by Kyle on 6/5/2015
@@ -23,7 +26,7 @@ public class TopSongsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_base);
+        setContentView(R.layout.activity_topsongs);
         ButterKnife.inject(this);
 
         Intent i = getIntent();
@@ -39,11 +42,11 @@ public class TopSongsActivity extends AppCompatActivity{
         }
 
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.top_songs_list_container, new TopSongsFragment())
-                    .commit();
-        }
+//        if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.top_songs_list_container, new TopSongsFragment())
+//                    .commit();
+//        }
     }
 
     @Override
@@ -54,5 +57,28 @@ public class TopSongsActivity extends AppCompatActivity{
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onEvent(SongClickEvent event){ //only received in Single pane flow
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
+
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 }

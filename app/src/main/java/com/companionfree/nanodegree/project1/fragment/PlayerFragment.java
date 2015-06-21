@@ -1,5 +1,6 @@
 package com.companionfree.nanodegree.project1.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -10,13 +11,14 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -31,7 +33,6 @@ import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -43,7 +44,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 /**
  * Created by Kyle on 6/6/2015
  */
-public class SingleSongFragment extends Fragment implements View.OnClickListener{
+public class PlayerFragment extends DialogFragment implements View.OnClickListener{
 
     public static final String PLAYLIST = "playlist";
 
@@ -62,11 +63,23 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
     @InjectView(R.id.media_play) FloatingActionButton play;
     @InjectView(R.id.media_next) ImageButton next;
 
+    public static PlayerFragment newInstance() {
+        return new PlayerFragment();
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_song, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.inject(this, rootView);
 
         TextView title = (TextView) rootView.findViewById(R.id.song_title2);
@@ -75,7 +88,12 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
 
-        playList =  getActivity().getIntent().getExtras().getParcelable(PLAYLIST);
+        Bundle bundle = getArguments();
+        if (bundle == null) { // Single pane layout
+            bundle = getActivity().getIntent().getExtras();
+        }
+        playList = bundle.getParcelable(PLAYLIST);
+
         currentTrack = playList.getCurrentTrack();
 
         title.setText(currentTrack.trackName);
@@ -216,7 +234,7 @@ public class SingleSongFragment extends Fragment implements View.OnClickListener
         }
         Intent i = new Intent(getActivity(), PlaybackService.class);
         i.setAction(action);
-        i.putExtra(SingleSongFragment.PLAYLIST, playList);
+        i.putExtra(PlayerFragment.PLAYLIST, playList);
         getActivity().startService(i);
     }
 }

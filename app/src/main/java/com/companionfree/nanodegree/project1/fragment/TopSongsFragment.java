@@ -12,6 +12,7 @@ import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.InterruptedIOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +22,7 @@ import java.util.Map;
 
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
+import retrofit.RetrofitError;
 
 
 /**
@@ -49,8 +51,11 @@ public class TopSongsFragment extends BaseFragment{
         recyclerView.setAdapter(topSongsAdapter);
 
         Bundle bundle = getArguments();
-        artistId = bundle.getString(ARTIST_ID);
+        if (bundle == null) { // Single pane layout
+            bundle = getActivity().getIntent().getExtras();
+        }
 
+        artistId = bundle.getString(ARTIST_ID);
         toolbar.setTitle(bundle.getString(ARTIST_NAME));
 
         return rootView;
@@ -107,17 +112,21 @@ public class TopSongsFragment extends BaseFragment{
             protected Void doInBackground(Void... params) {
                 Map<String, Object> options = new HashMap<>();
                 options.put("country", "US");
-                Tracks results = spotifyService.getArtistTopTrack(artistId, options);
+                try {
+                    Tracks results = spotifyService.getArtistTopTrack(artistId, options);
+                    List<Track> resultTracks = results.tracks;
+                    tracks.clear();
 
-                List<Track> resultTracks = results.tracks;
-                tracks.clear();
+                    List<CustomTrack> customTracks = new ArrayList<>();
+                    for (Track track : resultTracks) {
+                        customTracks.add(new CustomTrack(track));
+                    }
 
-                List<CustomTrack> customTracks = new ArrayList<>();
-                for (Track track : resultTracks) {
-                    customTracks.add(new CustomTrack(track));
+                    tracks.addAll(customTracks);
+                } catch (RetrofitError error) { // timeout errors
+
+                    // TODO (and in other fragment)
                 }
-
-                tracks.addAll(customTracks);
 
                 return null;
             }

@@ -48,7 +48,7 @@ public class BaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_base, container, false);
+        rootView = inflater.inflate(R.layout.fragment_search, container, false);
         ButterKnife.inject(this, rootView);
 
         LinearLayoutManager llm = new LinearLayoutManager(getActivity());

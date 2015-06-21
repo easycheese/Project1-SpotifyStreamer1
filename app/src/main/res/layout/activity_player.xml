@@ -1,0 +1,24 @@
+<!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:id="@+id/top_songs_fragment"-->
+    <!--android:name="com.companionfree.nanodegree.project1.fragment.PlayerFragment"-->
+    <!--android:layout_width="match_parent" android:layout_height="match_parent"-->
+    <!--tools:context=".PlayerFragment"      />-->
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <include layout="@layout/my_toolbar"
+        android:id="@+id/toolbar"
+        android:visibility="gone"
+        />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/embedded"
+        android:layout_below="@id/toolbar"
+        />
+
+</RelativeLayout>
