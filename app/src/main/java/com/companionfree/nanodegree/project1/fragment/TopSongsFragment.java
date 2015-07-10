@@ -30,7 +30,7 @@ import retrofit.RetrofitError;
  */
 public class TopSongsFragment extends BaseFragment{
 
-    private List<CustomTrack> tracks;
+    private ArrayList<CustomTrack> tracks;
     private TopSongsAdapter topSongsAdapter;
 
     private String artistId;
@@ -69,8 +69,9 @@ public class TopSongsFragment extends BaseFragment{
     public void onSaveInstanceState(Bundle outState) {
         killRunningTaskIfExists();
         saveError(outState);
-        String json = new Gson().toJson(tracks);
-        outState.putString(resultsSave, json);
+//        String json = new Gson().toJson(tracks);
+//        outState.putString(resultsSave, json);
+        outState.putParcelableArrayList(resultsSave, tracks);
         super.onSaveInstanceState(outState);
     }
 
@@ -79,13 +80,7 @@ public class TopSongsFragment extends BaseFragment{
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             displaySavedError(savedInstanceState);
-            String results = savedInstanceState.getString(resultsSave);
-            Type collectionType = new TypeToken<Collection<Track>>(){}.getType();
-            List<Track> trackResults = new Gson().fromJson(results, collectionType);
-            ArrayList<CustomTrack> customTracks = new ArrayList<>();
-            for (Track track : trackResults) {
-                customTracks.add(new CustomTrack(track));
-            }
+            ArrayList<CustomTrack> customTracks = savedInstanceState.getParcelableArrayList(resultsSave);
             tracks.addAll(customTracks);
         } else {
             executeSearch();

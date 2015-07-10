@@ -49,7 +49,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
 
 
-    private List<Artist> artists;
+    private ArrayList<Artist> artists;
     private ArtistAdapter artistAdapter;
 
     private static final long SEARCH_DELAY_MILLIS = 500;
@@ -183,7 +183,8 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         outState.putBoolean(searchState_Save, searchEnabled);
         String json = new Gson().toJson(artists);
         outState.putString(resultsSave, json);
-
+        // TODO
+//        outState.putParcelableArrayList(resultsSave, artists);
         outState.putBoolean(searchKeyboardEnabled_Save, getInputMethodManager().isAcceptingText());
 
         super.onSaveInstanceState(outState);

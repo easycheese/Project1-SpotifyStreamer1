@@ -138,8 +138,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        String json = new Gson().toJson(currentTrack);
-        outState.putString(resultsSave, json);
+        outState.putParcelable(resultsSave, currentTrack);
         super.onSaveInstanceState(outState);
     }
 
@@ -154,8 +153,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         }
 
         if (savedInstanceState != null) {
-            String results = savedInstanceState.getString(resultsSave);
-            currentTrack = new Gson().fromJson(results, CustomTrack.class);
+            currentTrack = savedInstanceState.getParcelable(resultsSave);
         } else {
             executeSearch();
         }
