@@ -69,8 +69,6 @@ public class TopSongsFragment extends BaseFragment{
     public void onSaveInstanceState(Bundle outState) {
         killRunningTaskIfExists();
         saveError(outState);
-//        String json = new Gson().toJson(tracks);
-//        outState.putString(resultsSave, json);
         outState.putParcelableArrayList(resultsSave, tracks);
         super.onSaveInstanceState(outState);
     }
@@ -112,12 +110,10 @@ public class TopSongsFragment extends BaseFragment{
                     List<Track> resultTracks = results.tracks;
                     tracks.clear();
 
-                    List<CustomTrack> customTracks = new ArrayList<>();
                     for (Track track : resultTracks) {
-                        customTracks.add(new CustomTrack(track));
+                        tracks.add(new CustomTrack(track));
                     }
 
-                    tracks.addAll(customTracks);
                 } catch (RetrofitError error) { // timeout errors
 
                     // TODO (and in other fragment)

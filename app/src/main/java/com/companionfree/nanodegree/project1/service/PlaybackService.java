@@ -103,7 +103,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         wifiLock.acquire();
 
         String songName;
-        // assign the song artistName to songName
+        // assign the song name to songName
         PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
                 new Intent(getApplicationContext(), getClass()),
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -124,7 +124,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
         notification.setLatestEventInfo(getApplicationContext(),
                 getApplicationContext().getString(R.string.app_name),
-                "Playing: " + "artistName", pi);
+                "Playing: " + "name", pi);
         startForeground(NOTIFICATION_ID, notification);
 
 

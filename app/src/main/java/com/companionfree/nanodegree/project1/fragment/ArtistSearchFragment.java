@@ -4,16 +4,13 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.input.InputManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +20,11 @@ import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
+import com.companionfree.nanodegree.project1.model.CustomArtist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-
-import butterknife.InjectView;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 
@@ -47,9 +38,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     private String searchText_Save = "search_text";
     private String searchKeyboardEnabled_Save = "search_keyboard_enabled";
 
-
-
-    private ArrayList<Artist> artists;
+    private ArrayList<CustomArtist> artists;
     private ArtistAdapter artistAdapter;
 
     private static final long SEARCH_DELAY_MILLIS = 500;
@@ -57,6 +46,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     private boolean searchKeyboardEnabled = false;
     private String currentSearchText = "";
 
+    //TODO upon rotation is re-searching instead of loading from savedInstanceState
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -95,6 +85,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     private void setupToolbar() {
         toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setTitle(getString(R.string.app_name));
+
         Menu menu = toolbar.getMenu();
         MenuItem searchButton = menu.findItem(R.id.search);
         MenuItemCompat.setOnActionExpandListener(searchButton,this);
@@ -102,24 +93,24 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) searchButton.getActionView();
         searchView.setFocusable(true);
-        if (searchView != null) {
 
-            if (searchEnabled) {
-                searchButton.expandActionView();
-                searchView.setQuery(currentSearchText, false);
-                if (!searchKeyboardEnabled) {
-                    searchView.clearFocus();
-                }
-
+        if (searchEnabled) {
+            searchButton.expandActionView();
+            searchView.setQuery(currentSearchText, false);
+            if (!searchKeyboardEnabled) {
+                searchView.clearFocus();
             }
 
-            searchView.setSearchableInfo(searchManager
-                    .getSearchableInfo(getActivity().getComponentName()));
-            searchView.setIconifiedByDefault(false);
-
-            searchView.setOnQueryTextListener(this);
-
         }
+
+        searchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getActivity().getComponentName()));
+        searchView.setIconifiedByDefault(false);
+
+        searchView.setOnQueryTextListener(this);
+
+
+
     }
     protected void executeSearch() {
         boolean isConnected = getConnectivityStatus();
@@ -152,7 +143,10 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
                     ArtistsPager results = spotifyService.searchArtists(currentSearchText);
 
                     artists.clear();
-                    artists.addAll(results.artists.items);
+
+                    for (Artist artist : results.artists.items) {
+                        artists.add(new CustomArtist(artist));
+                    }
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -181,10 +175,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         saveError(outState);
         outState.putString(searchText_Save, currentSearchText);
         outState.putBoolean(searchState_Save, searchEnabled);
-        String json = new Gson().toJson(artists);
-        outState.putString(resultsSave, json);
-        // TODO
-//        outState.putParcelableArrayList(resultsSave, artists);
+        outState.putParcelableArrayList(resultsSave, artists);
         outState.putBoolean(searchKeyboardEnabled_Save, getInputMethodManager().isAcceptingText());
 
         super.onSaveInstanceState(outState);
@@ -194,15 +185,13 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState != null) {
-            displaySavedError(savedInstanceState);
-            searchEnabled = savedInstanceState.getBoolean(searchState_Save);
-            searchKeyboardEnabled = savedInstanceState.getBoolean(searchKeyboardEnabled_Save);
-            currentSearchText = savedInstanceState.getString(searchText_Save);
-            String results = savedInstanceState.getString(resultsSave);
-            Type collectionType = new TypeToken<Collection<Artist>>(){}.getType();
-            List<Artist> artistResults = new Gson().fromJson(results, collectionType);
-            artists.addAll(artistResults);
+        if (savedInstanceState != null) { // TODO Toolbar is auto searching on rotate
+//            searchEnabled = savedInstanceState.getBoolean(searchState_Save);
+//            displaySavedError(savedInstanceState);
+//            searchKeyboardEnabled = savedInstanceState.getBoolean(searchKeyboardEnabled_Save);
+//            currentSearchText = savedInstanceState.getString(searchText_Save);
+//            ArrayList<CustomArtist> artistResults = savedInstanceState.getParcelableArrayList(resultsSave);
+//            artists.addAll(artistResults);
         } else {
             displayError(R.string.error_no_search_text, true);
         }
@@ -221,6 +210,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public boolean onQueryTextChange(String newText) {
         currentSearchText = newText;
         executeSearch();
+
         return true;
     }
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.model.CustomArtist;
 import com.companionfree.nanodegree.project1.model.GenericViewHolder;
 import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 
@@ -19,9 +20,9 @@ import kaaes.spotify.webapi.android.models.Image;
 
 public class ArtistAdapter extends RecyclerView.Adapter<GenericViewHolder> implements View.OnClickListener{
 
-    private List<Artist> artistList;
+    private List<CustomArtist> artistList;
 
-    public ArtistAdapter(List<Artist> trngRecords) {
+    public ArtistAdapter(List<CustomArtist> trngRecords) {
         this.artistList = trngRecords;
 
     }
@@ -37,14 +38,14 @@ public class ArtistAdapter extends RecyclerView.Adapter<GenericViewHolder> imple
 
     @Override
     public void onBindViewHolder(final GenericViewHolder viewHolder, final int i) {
-        final Artist artist = artistList.get(i);
+        final CustomArtist artist = artistList.get(i);
 
         viewHolder.line2.setVisibility(View.GONE);
         viewHolder.line1.setText(artist.name);
 
-        if (!artist.images.isEmpty()) {
-            Image image = artist.images.get(0);
-            Glide.with(viewHolder.albumImage.getContext()).load(image.url)
+        String url = artist.imageURL;
+        if (!url.equals(CustomArtist.IMAGES_EMPTY)) {
+            Glide.with(viewHolder.albumImage.getContext()).load(url)
                     .centerCrop()
                     .into(viewHolder.albumImage);
         }
