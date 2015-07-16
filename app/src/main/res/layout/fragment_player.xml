@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:src="@mipmap/ic_skip_previous_black_48dp"
+                android:src="@drawable/ic_skip_previous_black_48dp"
                 style="?android:attr/borderlessButtonStyle"
                 />
 
@@ -108,7 +108,7 @@
                 android:id="@+id/media_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/ic_play_arrow_black_24dp"
+                android:src="@drawable/ic_play_arrow_black_24dp"
                 android:layout_gravity="center_horizontal"
                 />
         </FrameLayout>
@@ -123,7 +123,7 @@
                 android:id="@+id/media_next"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@mipmap/ic_skip_next_black_48dp"
+                android:src="@drawable/ic_skip_next_black_48dp"
                 style="?android:attr/borderlessButtonStyle"
                 />
         </FrameLayout>

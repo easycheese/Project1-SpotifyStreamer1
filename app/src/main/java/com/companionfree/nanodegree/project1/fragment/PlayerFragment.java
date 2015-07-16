@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +25,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
+import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
 import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
 import com.google.gson.Gson;
@@ -214,10 +217,14 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     // This method will be called when a MusicStatusEvent is posted
     public void onEvent(MusicStatusEvent event){
 
-        int id = (event.isPlaying) ? R.mipmap.ic_pause_black_24dp : R.mipmap.ic_play_arrow_black_24dp;
+        int id = (event.isPlaying) ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_24dp;
         play.setImageResource(id);
 
     }
+    public void onEvent(MusicStatusTimeEvent event) {
+        progressBar.setProgress(event.progress);
+    }
+
     @Override
     public void onClick(View v) {
 

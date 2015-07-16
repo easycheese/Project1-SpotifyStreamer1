@@ -32,9 +32,9 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         public static final String ACTION_PLAY = "com.companionfree.nanodegree.project1.action.PLAY";
         public static final String ACTION_PREV = "com.companionfree.nanodegree.project1.action.PREV";
         public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
-        SpotifyMediaPlayer mMediaPlayer = null;
-        private static final int NOTIFICATION_ID = 355;
 
+        private static final int NOTIFICATION_ID = 355;
+        SpotifyMediaPlayer mMediaPlayer = null;
         private Playlist playList;
 
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
@@ -45,14 +45,16 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         playList = bundle.getParcelable(PlayerFragment.PLAYLIST);
         Log.d("Spotify", "Song url: " + playList.getCurrentTrack().trackName);
 
-
-        String action = intent.getAction();
-
-
         if (mMediaPlayer == null) {
             setupService();
         }
 
+        handleAction(intent.getAction());
+
+        return START_NOT_STICKY;
+    }
+
+    private void handleAction(String action) {
         if (action.equals(ACTION_PLAY)) {
             boolean playing = true;
             if (mMediaPlayer.isPlaying()) {
@@ -60,6 +62,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 playing = false;
             } else if (mMediaPlayer.isPaused()) {
                 mMediaPlayer.start();
+
             } else {
                 mMediaPlayer.prepareAsync();
             }
@@ -70,19 +73,16 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
                 playList.skipNext();
-                setupService(); // TODO parse out different function
+//                setupService(); // TODO parse out different function
             }
 
         } else if (action.equals(ACTION_PREV)) {
             if (mMediaPlayer != null) {
                 mMediaPlayer.stop();
                 playList.skipPrevious();
-                setupService(); // TODO parse out different function
+//                setupService(); // TODO parse out different function
             }
         }
-
-
-        return START_NOT_STICKY;
     }
 
     private void setupService() {
@@ -102,31 +102,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
         wifiLock.acquire();
 
-        String songName;
-        // assign the song name to songName
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-                new Intent(getApplicationContext(), getClass()),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification.Builder builder = new Notification.Builder(getApplicationContext());
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            builder.addAction(R.mipmap.ic_skip_previous_black_36dp, null, getPendingIntent(ACTION_PREV));
-            builder.addAction(R.mipmap.ic_play_arrow_black_36dp, null, getPendingIntent(ACTION_PLAY));
-            builder.addAction(R.mipmap.ic_skip_next_black_36dp, null, getPendingIntent(ACTION_NEXT));
-        }
-
-        Notification notification = builder.build();
-        notification.tickerText = "text";
-        notification.icon = R.mipmap.ic_launcher;
-
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-        notification.setLatestEventInfo(getApplicationContext(),
-                getApplicationContext().getString(R.string.app_name),
-                "Playing: " + "name", pi);
-        startForeground(NOTIFICATION_ID, notification);
-
+        setNotification();
 
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
@@ -135,6 +111,30 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             // could not get audio focus.
         }
+    }
+    private void setNotification() {
+        // assign the song name to songName
+        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
+                new Intent(getApplicationContext(), getClass()),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        int playDrawable = mMediaPlayer.isPlaying() ? R.drawable.ic_play_arrow_black_36dp : R.drawable.ic_pause_black_24dp;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            builder.addAction(R.drawable.ic_skip_previous_black_36dp, null, getPendingIntent(ACTION_PREV));
+            builder.addAction(playDrawable, null, getPendingIntent(ACTION_PLAY));
+            builder.addAction(R.drawable.ic_skip_next_black_36dp, null, getPendingIntent(ACTION_NEXT));
+        }
+        builder.setContentTitle("songName");
+        Notification notification = builder.build();
+
+        notification.tickerText = "text";
+        notification.icon = R.mipmap.ic_launcher;
+
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.setLatestEventInfo(getApplicationContext(),
+                getApplicationContext().getString(R.string.app_name),
+                "Playing: " + "name", pi);
+        startForeground(NOTIFICATION_ID, notification);
     }
     private PendingIntent getPendingIntent(String action) {
         Intent i = new Intent(getApplicationContext(), getClass());
