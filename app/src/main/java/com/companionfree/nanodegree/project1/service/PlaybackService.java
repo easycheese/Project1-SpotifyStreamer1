@@ -12,10 +12,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
+import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.util.SpotifyMediaPlayer;
@@ -42,9 +45,13 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         Bundle bundle = intent.getExtras();
+
+        boolean existingPlaylistOverwritten = playList != null;
+
         playList = bundle.getParcelable(PlayerFragment.PLAYLIST);
         Log.d("Spotify", "Song url: " + playList.getCurrentTrack().trackName);
 
+//        if (mMediaPlayer == null || existingPlaylistOverwritten) {
         if (mMediaPlayer == null) {
             setupService();
         }
@@ -124,17 +131,30 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             builder.addAction(playDrawable, null, getPendingIntent(ACTION_PLAY));
             builder.addAction(R.drawable.ic_skip_next_black_36dp, null, getPendingIntent(ACTION_NEXT));
         }
-        builder.setContentTitle("songName");
+
+        CustomTrack track = playList.getCurrentTrack();
+        String songDescription = track.trackName + " by " + track.artistName;
+
+        builder.setContentTitle(songDescription);
         Notification notification = builder.build();
 
-        notification.tickerText = "text";
         notification.icon = R.mipmap.ic_launcher;
 
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
         notification.setLatestEventInfo(getApplicationContext(),
-                getApplicationContext().getString(R.string.app_name),
-                "Playing: " + "name", pi);
+                track.trackName,
+                "by " + track.artistName, pi);
         startForeground(NOTIFICATION_ID, notification);
+
+//        MediaSessionCompat session = new MediaSessionCompat();
+//
+//        Notification noti = new NotificationCompat.Builder(getApplicationContext())
+//                .setSmallIcon(R.mipmap.ic_launcher)
+//                .setContentTitle("Track title")
+//                .setContentText("Artist - Album")
+//                .setStyle(new NotificationCompat.MediaStyle()
+//                        .setMediaSession(mMediaPlayer))
+//                .build();
     }
     private PendingIntent getPendingIntent(String action) {
         Intent i = new Intent(getApplicationContext(), getClass());
