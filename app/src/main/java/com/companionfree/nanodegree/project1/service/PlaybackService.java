@@ -50,8 +50,10 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
         boolean existingPlaylistOverwritten = playList != null;
 
-        playList = bundle.getParcelable(PlayerFragment.PLAYLIST);
-        Log.d(getClass().getSimpleName(), "Song url: " + playList.getCurrentTrack().trackName);
+        if (bundle != null) {
+            playList = bundle.getParcelable(PlayerFragment.PLAYLIST);
+            Log.d(getClass().getSimpleName(), "Song url: " + playList.getCurrentTrack().trackName);
+        }
 
 //        if (mMediaPlayer == null || existingPlaylistOverwritten) {
         if (mMediaPlayer == null) {
@@ -92,6 +94,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 //                setupService(); // TODO parse out different function
             }
         }
+        setNotification();
     }
 
     private void setupService() {
@@ -112,8 +115,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
         wifiLock.acquire();
 
-        setNotification();
-
         AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN);
@@ -130,7 +131,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 new Intent(getApplicationContext(), getClass()),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
-        int playDrawable = mMediaPlayer.isPlaying() ? R.drawable.ic_play_arrow_black_36dp : R.drawable.ic_pause_black_24dp;
+        int playDrawable = mMediaPlayer.isPlaying() ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_36dp;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             builder.addAction(R.drawable.ic_skip_previous_black_36dp, null, getPendingIntent(ACTION_PREV));
             builder.addAction(playDrawable, null, getPendingIntent(ACTION_PLAY));
@@ -181,7 +182,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         public void onPrepared(MediaPlayer player) {
             Log.d("Spotify", "MediaPlayer Starting");
             player.start();
-
+            setNotification();
         }
 
     @Override
