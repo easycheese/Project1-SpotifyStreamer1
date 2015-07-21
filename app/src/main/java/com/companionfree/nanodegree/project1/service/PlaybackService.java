@@ -31,7 +31,8 @@ import de.greenrobot.event.EventBus;
  * Created by Kyle on 6/13/2015
  */
 public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPreparedListener,
-        SpotifyMediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener{
+        SpotifyMediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener,
+        MediaPlayer.OnCompletionListener {
         public static final String ACTION_PLAY = "com.companionfree.nanodegree.project1.action.PLAY";
         public static final String ACTION_PREV = "com.companionfree.nanodegree.project1.action.PREV";
         public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
@@ -39,6 +40,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         private static final int NOTIFICATION_ID = 355;
         SpotifyMediaPlayer mMediaPlayer = null;
         private Playlist playList;
+
 
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
 
@@ -49,7 +51,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         boolean existingPlaylistOverwritten = playList != null;
 
         playList = bundle.getParcelable(PlayerFragment.PLAYLIST);
-        Log.d("Spotify", "Song url: " + playList.getCurrentTrack().trackName);
+        Log.d(getClass().getSimpleName(), "Song url: " + playList.getCurrentTrack().trackName);
 
 //        if (mMediaPlayer == null || existingPlaylistOverwritten) {
         if (mMediaPlayer == null) {
@@ -95,6 +97,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     private void setupService() {
         mMediaPlayer = new SpotifyMediaPlayer(); // initialize it here
         mMediaPlayer.setOnPreparedListener(this);
+        mMediaPlayer.setOnCompletionListener(this);
 
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
@@ -118,6 +121,8 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             // could not get audio focus.
         }
+
+
     }
     private void setNotification() {
         // assign the song name to songName
@@ -223,4 +228,9 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     }
 
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        Log.d(getClass().getSimpleName(), "music stopped");
+        EventBus.getDefault().post(new MusicStatusEvent(false));
+    }
 }
