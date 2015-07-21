@@ -61,10 +61,15 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     @InjectView(R.id.loading_bar) ProgressBar loadingBar;
     @InjectView(R.id.song_image) ImageView albumImage;
     @InjectView(R.id.song_progress) SeekBar progressBar;
+    @InjectView(R.id.song_title2) TextView songTitle;
 
     @InjectView(R.id.media_previous) ImageButton previous;
     @InjectView(R.id.media_play) FloatingActionButton play;
     @InjectView(R.id.media_next) ImageButton next;
+
+    @InjectView(R.id.time_end) TextView endTime;
+    @InjectView(R.id.time_start) TextView currentSongTime;
+
 
     public static PlayerFragment newInstance() {
         return new PlayerFragment();
@@ -85,9 +90,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         View rootView = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.inject(this, rootView);
 
-        TextView title = (TextView) rootView.findViewById(R.id.song_title2);
-        TextView endTime = (TextView) rootView.findViewById(R.id.time_end);
-
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
 
@@ -99,7 +101,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
         currentTrack = playList.getCurrentTrack();
 
-        title.setText(currentTrack.trackName);
+        songTitle.setText(currentTrack.trackName);
         endTime.setText(getTimeString(currentTrack.duration));
         progressBar.setMax((int) currentTrack.duration);
 
@@ -131,11 +133,14 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         return rootView;
     }
     private String getTimeString(long millis) {
-        return String.format("%d:%d",
-                TimeUnit.MILLISECONDS.toMinutes(millis),
-                TimeUnit.MILLISECONDS.toSeconds(millis) -
-                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
-        );
+        long secondsLong = TimeUnit.MILLISECONDS.toSeconds(millis) -
+                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis));
+        String secondsString = "" + secondsLong;
+        if (secondsLong < 10) {
+            secondsString = "0" + secondsLong;
+        }
+        return String.format("%d:%s",
+                TimeUnit.MILLISECONDS.toMinutes(millis), secondsString);
     }
 
 
@@ -221,9 +226,11 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         play.setImageResource(id);
 
     }
-    public void onEvent(MusicStatusTimeEvent event) {
+    public void onEventMainThread(MusicStatusTimeEvent event) {
         progressBar.setProgress(event.progress);
+        currentSongTime.setText(getTimeString(event.progress));
     }
+
 
     @Override
     public void onClick(View v) {

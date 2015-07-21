@@ -74,11 +74,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
             }
         });
 
-        //TODO remove for final
-        Intent i = new Intent(getActivity(), PlaybackService.class);
-        i.setAction(PlaybackService.ACTION_PLAY);
-//        getActivity().startService(i);
-
         return rootView;
     }
 

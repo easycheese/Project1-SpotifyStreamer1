@@ -1,7 +1,6 @@
 package com.companionfree.nanodegree.project1.util;
 
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
 
@@ -13,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import de.greenrobot.event.EventBus;
 
 /**
- * Created by Kyle on 6/19/2015.
+ * Created by Kyle on 6/19/2015
  */
 public class SpotifyMediaPlayer extends MediaPlayer {
 
