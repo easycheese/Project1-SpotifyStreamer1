@@ -3,6 +3,9 @@ package com.companionfree.nanodegree.project1.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment;
@@ -64,9 +67,9 @@ public class MainSearchActivity extends AppCompatActivity  {
             intent.putExtras(bundle);
             startActivity(intent);
         }
-
-
     }
+
+
 
     public void onEvent(SongClickEvent event){ // only received in Master-Detail flow
         Bundle bundle = new Bundle();

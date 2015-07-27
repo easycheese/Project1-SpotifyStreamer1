@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="pref_sync"
+        android:title="@string/pref_notification"
+        android:summary="@string/pref_notification_summary"
+        android:defaultValue="true" />
+
+    <include layout="@layout/my_toolbar"
+        android:id="@+id/toolbar_settings"
+        />
+</PreferenceScreen>

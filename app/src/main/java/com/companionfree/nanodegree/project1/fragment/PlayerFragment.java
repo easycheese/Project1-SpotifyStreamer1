@@ -16,6 +16,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -27,6 +30,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
@@ -101,6 +105,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         play.setOnClickListener(this);
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
+
 
         return rootView;
     }

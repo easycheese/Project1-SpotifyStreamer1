@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,9 +18,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
@@ -33,7 +35,7 @@ import kaaes.spotify.webapi.android.models.ArtistsPager;
  * A placeholder fragment containing a simple view
  */
 public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQueryTextListener,
-        MenuItemCompat.OnActionExpandListener {
+        MenuItemCompat.OnActionExpandListener, Toolbar.OnMenuItemClickListener {
     private String searchState_Save = "search_state";
     private String searchText_Save = "search_text";
     private String searchKeyboardEnabled_Save = "search_keyboard_enabled";
@@ -74,6 +76,8 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
             }
         });
 
+        setHasOptionsMenu(true);
+
         return rootView;
     }
 
@@ -82,8 +86,8 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         toolbar.setTitle(getString(R.string.app_name));
 
         Menu menu = toolbar.getMenu();
-        MenuItem searchButton = menu.findItem(R.id.search);
-        MenuItemCompat.setOnActionExpandListener(searchButton,this);
+        MenuItem searchButton = menu.findItem(R.id.menu_search);
+        MenuItemCompat.setOnActionExpandListener(searchButton, this);
 
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         SearchView searchView = (SearchView) searchButton.getActionView();
@@ -105,8 +109,10 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         searchView.setOnQueryTextListener(this);
 
 
-
+        toolbar.setOnMenuItemClickListener(this);
     }
+
+
     protected void executeSearch() {
         boolean isConnected = getConnectivityStatus();
         boolean searchIsEmpty = currentSearchText.equals("");
@@ -219,6 +225,19 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         searchEnabled = false;
         currentSearchText = "";
         return true;
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+
+        Log.d("Spotify", "item");
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+                Intent i = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(i);
+                return true;
+        }
+        return false;
     }
 
 
