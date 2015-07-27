@@ -157,7 +157,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
                 if (artists != null && artists.isEmpty()) {
                     displayError(R.string.error_no_results, false);
-                    Toast.makeText(getActivity(), R.string.search_fail, Toast.LENGTH_SHORT).show();
                 }
             }
         };

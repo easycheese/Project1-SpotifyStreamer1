@@ -48,15 +48,30 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
         Bundle bundle = intent.getExtras();
 
-        boolean existingPlaylistOverwritten = playList != null;
+        boolean newPlaylistData = false;
 
         if (bundle != null) {
-            playList = bundle.getParcelable(PlayerFragment.PLAYLIST);
+            Playlist newPlaylist = bundle.getParcelable(PlayerFragment.PLAYLIST);
+
+            if (playList == null) {
+                Log.d(getClass().getSimpleName(), "Starting new session");
+                playList = newPlaylist;
+            }
+
+            if (!playList.getCurrentTrack().id.equals(newPlaylist.getCurrentTrack().id)) {
+                Log.d(getClass().getSimpleName(), "Stopping song, new playlist loaded");
+                playList = newPlaylist;
+                newPlaylistData = true;
+                mMediaPlayer.stop();
+            }
+
             Log.d(getClass().getSimpleName(), "Song url: " + playList.getCurrentTrack().trackName);
         }
 
 //        if (mMediaPlayer == null || existingPlaylistOverwritten) {
-        if (mMediaPlayer == null) {
+        if (mMediaPlayer == null || newPlaylistData) {
+
+            Log.d(getClass().getSimpleName(), "Setting up new service");
             setupService();
         }
 
@@ -78,27 +93,35 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 mMediaPlayer.prepareAsync();
             }
 
-            EventBus.getDefault().post(new MusicStatusEvent(playing));
+            EventBus.getDefault().post(new MusicStatusEvent(playing, playList));
 
         } else if (action.equals(ACTION_NEXT)) {
             if (mMediaPlayer != null) {
-                mMediaPlayer.stop();
                 playList.skipNext();
-//                setupService(); // TODO parse out different function
+                playNewTrack();
             }
 
         } else if (action.equals(ACTION_PREV)) {
             if (mMediaPlayer != null) {
-                mMediaPlayer.stop();
                 playList.skipPrevious();
-//                setupService(); // TODO parse out different function
+                playNewTrack();
+
             }
         }
         setNotification();
     }
+    private void playNewTrack() {
+        setupService();
+        handleAction(ACTION_PLAY);
+    }
 
     private void setupService() {
-        mMediaPlayer = new SpotifyMediaPlayer(); // initialize it here
+        if (mMediaPlayer == null) {
+            mMediaPlayer = new SpotifyMediaPlayer();
+        } else {
+            mMediaPlayer.reset();
+        }
+
         mMediaPlayer.setOnPreparedListener(this);
         mMediaPlayer.setOnCompletionListener(this);
 
@@ -191,7 +214,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         // The MediaPlayer has moved to the Error state, must be reset!
         Log.d("Spotify", "MediaPlayer Error, resetting");
         mp.reset();
-        EventBus.getDefault().post(new MusicStatusEvent(false));
+        EventBus.getDefault().post(new MusicStatusEvent(false, playList));
         return false;
     }
 
@@ -232,6 +255,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.d(getClass().getSimpleName(), "music stopped");
-        EventBus.getDefault().post(new MusicStatusEvent(false));
+        EventBus.getDefault().post(new MusicStatusEvent(false, playList));
     }
 }

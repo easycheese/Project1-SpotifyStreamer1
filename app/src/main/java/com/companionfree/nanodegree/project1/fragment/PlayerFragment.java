@@ -15,7 +15,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
@@ -34,7 +32,6 @@ import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
 import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
-import com.google.gson.Gson;
 
 import java.util.concurrent.TimeUnit;
 
@@ -99,8 +96,16 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         }
         playList = bundle.getParcelable(PLAYLIST);
 
-        currentTrack = playList.getCurrentTrack();
+        setTrackVisuals();
 
+        play.setOnClickListener(this);
+        previous.setOnClickListener(this);
+        next.setOnClickListener(this);
+
+        return rootView;
+    }
+    private void setTrackVisuals() {
+        currentTrack = playList.getCurrentTrack();
         songTitle.setText(currentTrack.trackName);
         endTime.setText(getTimeString(currentTrack.duration));
         progressBar.setMax((int) currentTrack.duration);
@@ -126,11 +131,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             d.setColorFilter(currentTrack.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
             DrawableCompat.setTint(d, currentTrack.getPaletteColor());
         }
-        play.setOnClickListener(this);
-        previous.setOnClickListener(this);
-        next.setOnClickListener(this);
-
-        return rootView;
     }
     private String getTimeString(long millis) {
         long secondsLong = TimeUnit.MILLISECONDS.toSeconds(millis) -
@@ -163,10 +163,10 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         if (savedInstanceState != null) {
             currentTrack = savedInstanceState.getParcelable(resultsSave);
         } else {
-            executeSearch();
+            playMusic();
         }
     }
-    private void executeSearch() {
+    private void playMusic() {
         ConnectivityManager cm =
                 (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -174,39 +174,18 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
 
-        killRunningTaskIfExists();
-
         if (!isConnected) {
 //            displayError(R.string.error_network_availability); TODO
         } else {
 //            removeError(); TODO
             loadingBar.setVisibility(View.VISIBLE);
-            searchTask = getSearchTask().execute();
+            sendServiceMessage(PlaybackService.ACTION_PLAY); //TODO need some way of playing new song if new
         }
 
 
     }
-    private AsyncTask<Void, Void, Void> getSearchTask() {
-        return new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
 
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                loadingBar.setVisibility(View.GONE);
-            }
-        };
-    }
-    private void killRunningTaskIfExists() {
-        if (searchTask != null) {
-            searchTask.cancel(true);
-            searchTask = null;
-        }
-    }
     @Override
     public void onStart() {
         super.onStart();
@@ -224,6 +203,13 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
         int id = (event.isPlaying) ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_24dp;
         play.setImageResource(id);
+
+        CustomTrack serviceCurrentTrack = event.currentPlaylist.getCurrentTrack();
+        if (!currentTrack.id.equals(serviceCurrentTrack.id)) {
+            // TODO need to reload album and name
+            playList = event.currentPlaylist;
+            setTrackVisuals();
+        }
 
     }
     public void onEventMainThread(MusicStatusTimeEvent event) {
@@ -244,9 +230,14 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         } else if (id == next.getId()) {
             action = PlaybackService.ACTION_NEXT;
         }
+        sendServiceMessage(action);
+    }
+
+    private void sendServiceMessage(String action) {
         Intent i = new Intent(getActivity(), PlaybackService.class);
         i.setAction(action);
         i.putExtra(PlayerFragment.PLAYLIST, playList);
         getActivity().startService(i);
     }
+
 }
