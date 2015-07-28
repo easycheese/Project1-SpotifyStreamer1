@@ -37,11 +37,6 @@
         android:textColor="@android:color/black"
         />
 
-
-
-
-
-
     <SeekBar
         android:id="@+id/song_progress"
         android:layout_width="match_parent"

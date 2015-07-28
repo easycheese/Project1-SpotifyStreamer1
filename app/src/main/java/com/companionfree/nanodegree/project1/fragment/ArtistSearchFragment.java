@@ -20,6 +20,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
 import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
@@ -76,12 +77,13 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
             }
         });
 
-        setHasOptionsMenu(true);
 
         return rootView;
     }
 
     private void setupToolbar() {
+
+
         toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setTitle(getString(R.string.app_name));
 

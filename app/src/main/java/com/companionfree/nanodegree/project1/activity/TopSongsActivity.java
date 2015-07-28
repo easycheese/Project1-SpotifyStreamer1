@@ -62,12 +62,9 @@ public class TopSongsActivity extends AppCompatActivity{
     public void onEvent(SongClickEvent event){ //only received in Single pane flow
         Bundle bundle = new Bundle();
         bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
-
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
-
-
     }
 
     @Override

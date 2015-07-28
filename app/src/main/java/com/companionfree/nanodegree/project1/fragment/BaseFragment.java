@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -57,6 +58,12 @@ public class BaseFragment extends Fragment {
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
 
+        MainSearchActivity mainSearchActivity = (MainSearchActivity) getActivity();
+
+        if (mainSearchActivity.isTwoPane()) {
+            toolbar.setVisibility(View.GONE);
+            toolbar = mainSearchActivity.getMainToolbar();
+        } // TODO
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 

@@ -53,10 +53,15 @@ public class TopSongsFragment extends BaseFragment{
         Bundle bundle = getArguments();
         if (bundle == null) { // Single pane layout
             bundle = getActivity().getIntent().getExtras();
+
+            if (bundle != null) {
+                artistId = bundle.getString(ARTIST_ID);
+                toolbar.setTitle(bundle.getString(ARTIST_NAME));
+            }
+
         }
 
-        artistId = bundle.getString(ARTIST_ID);
-        toolbar.setTitle(bundle.getString(ARTIST_NAME));
+
 
         return rootView;
     }

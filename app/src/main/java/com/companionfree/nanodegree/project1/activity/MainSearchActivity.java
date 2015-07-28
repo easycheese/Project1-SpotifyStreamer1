@@ -3,6 +3,7 @@ package com.companionfree.nanodegree.project1.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,12 +15,15 @@ import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
 
+import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 
 public class MainSearchActivity extends AppCompatActivity  {
 
     private boolean mTwoPane;
     private String TAG_PLAYER = "player";
+
+    private Toolbar mainToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +37,19 @@ public class MainSearchActivity extends AppCompatActivity  {
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+            mainToolbar = (Toolbar) findViewById(R.id.maintoolbar);
 
             ArtistSearchFragment fragment = new ArtistSearchFragment();
 //            fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.top_songs_list_container, fragment)
+                    .replace(R.id.artist_search_fragment, fragment)
                     .commit();
 
+            TopSongsFragment topSongsFragment = new TopSongsFragment();
+//            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.top_songs_list_container, topSongsFragment)
+                    .commit();
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
@@ -47,6 +57,12 @@ public class MainSearchActivity extends AppCompatActivity  {
 //                    .findFragmentById(R.id.artist_search_fragment))
 //            .setActivateOnItemClick(true);
         }
+    }
+    public Toolbar getMainToolbar() {
+        return mainToolbar;
+    }
+    public boolean isTwoPane() {
+        return mTwoPane;
     }
 
 
@@ -77,7 +93,6 @@ public class MainSearchActivity extends AppCompatActivity  {
         PlayerFragment songFragment = PlayerFragment.newInstance();
         songFragment.setArguments(bundle);
         songFragment.show(getSupportFragmentManager(), TAG_PLAYER);
-
     }
 
     @Override
