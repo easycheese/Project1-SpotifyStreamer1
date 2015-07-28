@@ -58,12 +58,19 @@ public class BaseFragment extends Fragment {
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
 
-        MainSearchActivity mainSearchActivity = (MainSearchActivity) getActivity();
+        try {
+            MainSearchActivity mainSearchActivity = (MainSearchActivity) getActivity();
+            if (mainSearchActivity.isTwoPane()) {
+                toolbar.setVisibility(View.GONE);
+                toolbar = mainSearchActivity.getMainToolbar();
+            }
 
-        if (mainSearchActivity.isTwoPane()) {
-            toolbar.setVisibility(View.GONE);
-            toolbar = mainSearchActivity.getMainToolbar();
-        } // TODO
+        } catch (ClassCastException e) {
+            // Single pane && topSongsFragment, do nothing
+        }
+
+
+
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
