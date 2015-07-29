@@ -1,5 +1,6 @@
 package com.companionfree.nanodegree.project1.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -58,18 +59,11 @@ public class BaseFragment extends Fragment {
         SpotifyApi api = new SpotifyApi();
         spotifyService = api.getService();
 
-        try {
-            MainSearchActivity mainSearchActivity = (MainSearchActivity) getActivity();
-            if (mainSearchActivity.isTwoPane()) {
-                toolbar.setVisibility(View.GONE);
-                toolbar = mainSearchActivity.getMainToolbar();
-            }
-
-        } catch (ClassCastException e) {
-            // Single pane && topSongsFragment, do nothing
+        Activity activity = getActivity();
+        if (activity instanceof MainSearchActivity && ((MainSearchActivity) activity).isTwoPane()) { // dual pane mode
+            toolbar.setVisibility(View.GONE);
+            toolbar = ((MainSearchActivity) activity).getMainToolbar();
         }
-
-
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

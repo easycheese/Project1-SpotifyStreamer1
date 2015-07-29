@@ -2,8 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <CheckBoxPreference
-        android:key="pref_sync"
+        android:key="pref_notification"
         android:title="@string/pref_notification"
         android:defaultValue="true" />
+
+    <Preference
+        android:key="pref_country"
+        android:title="@string/pref_country"
+        />
 
 </PreferenceScreen>
