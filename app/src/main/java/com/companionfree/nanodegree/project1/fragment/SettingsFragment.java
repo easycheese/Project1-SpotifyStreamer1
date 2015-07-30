@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.util.Xml;
-import android.widget.ProgressBar;
 
 import com.companionfree.nanodegree.project1.R;
 
@@ -16,9 +16,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Locale;
-
-import butterknife.InjectView;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Laptop on 7/26/2015
@@ -26,6 +25,7 @@ import butterknife.InjectView;
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
 
     private Preference countryCode;
+    private String TAG = "SpotifyStreamer";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +54,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) { // TODO work out these for display?
+            e.printStackTrace();
         }
 
 
@@ -76,14 +78,16 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         return false;
     }
 
-    private ArrayList<Country> parseXML(XmlPullParser parser) throws XmlPullParserException,IOException
-    {
+
+
+
+    private ArrayList<Country> parseXML(XmlPullParser parser) throws Exception {
         ArrayList<Country> countriesList = null;
         int eventType = parser.getEventType();
         Country currentProduct = null;
 
         while (eventType != XmlPullParser.END_DOCUMENT){
-            String name = null;
+            String name;
             switch (eventType){
                 case XmlPullParser.START_DOCUMENT:
                     countriesList = new ArrayList<>();
@@ -91,13 +95,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
                 case XmlPullParser.START_TAG:
                     name = parser.getName();
                     if (name.equals("country")){
-                        currentProduct = new Country();
-                    } else if (currentProduct != null){
-                        if (name.equals("code")){
-                            currentProduct.code = parser.nextText();
-                        } else if (name.equals("name")){
-                            currentProduct.name = parser.nextText();
-                        }
+                        Map<String,String> attributes = getAttributes(parser);
+                        currentProduct = new Country(attributes.get("name"), attributes.get("code"));
                     }
                     break;
                 case XmlPullParser.END_TAG:
@@ -115,9 +114,35 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
     }
 
 
+    private Map<String,String> getAttributes(XmlPullParser parser) throws Exception {
+        Map<String,String> attrs;
+        int acount=parser.getAttributeCount();
+        if(acount != -1) {
+            Log.d(TAG, "Attributes for [" + parser.getName() + "]");
+            attrs = new HashMap<>(acount);
+            for(int x=0;x<acount;x++) {
+                Log.d(TAG,"\t["+parser.getAttributeName(x)+"]=" +
+                        "["+parser.getAttributeValue(x)+"]");
+                attrs.put(parser.getAttributeName(x), parser.getAttributeValue(x));
+            }
+        }
+        else {
+            throw new Exception("Required entity attributes missing"); //TODO need to display the error
+        }
+        return attrs;
+    }
+
+
+
+
     class Country {
         public String code;
         public String name;
+
+        private Country(String name, String code) {
+            this.code = code;
+            this.name = name;
+        }
     }
 
 }
