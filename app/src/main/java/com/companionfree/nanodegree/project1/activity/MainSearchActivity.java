@@ -21,7 +21,6 @@ import de.greenrobot.event.EventBus;
 public class MainSearchActivity extends AppCompatActivity  {
 
     private boolean mTwoPane;
-    private String TAG_PLAYER = "player";
 
     private Toolbar mainToolbar;
 
@@ -40,18 +39,16 @@ public class MainSearchActivity extends AppCompatActivity  {
             mainToolbar = (Toolbar) findViewById(R.id.maintoolbar);
 
             ArtistSearchFragment fragment = new ArtistSearchFragment();
-//            fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.artist_search_fragment, fragment)
                     .commit();
 
             TopSongsFragment topSongsFragment = new TopSongsFragment();
-//            fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.top_songs_list_container, topSongsFragment)
                     .commit();
 
-            // In two-pane mode, list items should be given the
+            // In two-pane mode, list items should be given the TODO
             // 'activated' state when touched.
 //            ((TopSongsFragment) getSupportFragmentManager()
 //                    .findFragmentById(R.id.artist_search_fragment))
@@ -92,7 +89,7 @@ public class MainSearchActivity extends AppCompatActivity  {
         bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
         PlayerFragment songFragment = PlayerFragment.newInstance();
         songFragment.setArguments(bundle);
-        songFragment.show(getSupportFragmentManager(), TAG_PLAYER);
+        songFragment.show(getSupportFragmentManager(), getClass().getSimpleName());
     }
 
     @Override

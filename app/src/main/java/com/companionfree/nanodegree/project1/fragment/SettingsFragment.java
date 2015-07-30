@@ -1,9 +1,11 @@
 package com.companionfree.nanodegree.project1.fragment;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Xml;
@@ -24,15 +26,14 @@ import java.util.Map;
  */
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
 
-    private Preference countryCode;
-    private String TAG = "SpotifyStreamer";
+    public static final String PREF_COUNTRY_CODE = "pref_country_code";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        countryCode = findPreference("pref_country");
+        Preference countryCode = findPreference("pref_country");
         countryCode.setOnPreferenceClickListener(this);
 
     }
@@ -42,7 +43,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         XmlPullParser xmlpullparser = Xml.newPullParser();
 
-        InputStream in_s = null;
+        InputStream in_s;
         ArrayList<Country> countries = new ArrayList<>();
         try {
             in_s = getActivity().getApplicationContext().getAssets().open("countries.xml");
@@ -67,11 +68,17 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final ArrayList<Country> finalCountries = countries;
         builder.setTitle(R.string.pref_country)
                 .setItems(countryNames, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // The 'which' argument contains the index position
                 // of the selected item
+                Country country = finalCountries.get(which);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putString(PREF_COUNTRY_CODE, country.code);
+                edit.apply();
             }
         });
         builder.create().show();
@@ -118,10 +125,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         Map<String,String> attrs;
         int acount=parser.getAttributeCount();
         if(acount != -1) {
-            Log.d(TAG, "Attributes for [" + parser.getName() + "]");
+            Log.d(getClass().getSimpleName(), "Attributes for [" + parser.getName() + "]");
             attrs = new HashMap<>(acount);
             for(int x=0;x<acount;x++) {
-                Log.d(TAG,"\t["+parser.getAttributeName(x)+"]=" +
+                Log.d(getClass().getSimpleName(),"\t["+parser.getAttributeName(x)+"]=" +
                         "["+parser.getAttributeValue(x)+"]");
                 attrs.put(parser.getAttributeName(x), parser.getAttributeValue(x));
             }
@@ -131,8 +138,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         }
         return attrs;
     }
-
-
 
 
     class Country {

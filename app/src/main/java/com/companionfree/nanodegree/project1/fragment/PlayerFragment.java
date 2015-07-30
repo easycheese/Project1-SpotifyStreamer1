@@ -56,8 +56,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
     private Playlist playList;
     private CustomTrack currentTrack;
-    private SpotifyService spotifyService;
-    private AsyncTask searchTask;
 
     @InjectView(R.id.loading_bar) ProgressBar loadingBar;
     @InjectView(R.id.song_image) ImageView albumImage;
@@ -90,9 +88,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
         View rootView = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.inject(this, rootView);
-
-        SpotifyApi api = new SpotifyApi();
-        spotifyService = api.getService();
 
         Bundle bundle = getArguments();
         if (bundle == null) { // Single pane layout

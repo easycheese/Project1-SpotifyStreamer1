@@ -48,6 +48,7 @@ public class BaseFragment extends Fragment {
     protected String errorTextSave = "errorText";
 
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_search, container, false);

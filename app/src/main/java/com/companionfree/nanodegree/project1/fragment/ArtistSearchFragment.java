@@ -232,7 +232,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     @Override
     public boolean onMenuItemClick(MenuItem item) {
 
-        Log.d("Spotify", "item");
+        Log.d(getClass().getSimpleName(), "item");
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 Intent i = new Intent(getActivity(), SettingsActivity.class);

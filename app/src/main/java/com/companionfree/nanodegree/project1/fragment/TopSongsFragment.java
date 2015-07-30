@@ -1,7 +1,9 @@
 package com.companionfree.nanodegree.project1.fragment;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,15 +55,12 @@ public class TopSongsFragment extends BaseFragment{
         Bundle bundle = getArguments();
         if (bundle == null) { // Single pane layout
             bundle = getActivity().getIntent().getExtras();
-
-            if (bundle != null) {
-                artistId = bundle.getString(ARTIST_ID);
-                toolbar.setTitle(bundle.getString(ARTIST_NAME));
-            }
-
         }
 
-
+        if (bundle != null) {
+            artistId = bundle.getString(ARTIST_ID);
+            toolbar.setTitle(bundle.getString(ARTIST_NAME));
+        }
 
         return rootView;
     }
@@ -108,8 +107,12 @@ public class TopSongsFragment extends BaseFragment{
 
             @Override
             protected Void doInBackground(Void... params) {
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                String countryCode = prefs.getString(SettingsFragment.PREF_COUNTRY_CODE, "us");
                 Map<String, Object> options = new HashMap<>();
-                options.put("country", "US");
+//                options.put("country", countryCode.toUpperCase());
+                options.put("country", countryCode);
                 try {
                     Tracks results = spotifyService.getArtistTopTrack(artistId, options);
                     List<Track> resultTracks = results.tracks;
@@ -120,7 +123,6 @@ public class TopSongsFragment extends BaseFragment{
                     }
 
                 } catch (RetrofitError error) { // timeout errors
-
                     // TODO (and in other fragment)
                 }
 
