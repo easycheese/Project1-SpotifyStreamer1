@@ -3,6 +3,7 @@ package com.companionfree.nanodegree.project1.fragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -24,8 +25,10 @@ import java.util.Map;
 /**
  * Created by Laptop on 7/26/2015
  */
-public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener{
+public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
+        Preference.OnPreferenceChangeListener {
 
+    private CheckBoxPreference notificationPreference;
     public static final String PREF_COUNTRY_CODE = "pref_country_code";
 
     @Override
@@ -35,6 +38,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         Preference countryCode = findPreference("pref_country");
         countryCode.setOnPreferenceClickListener(this);
+
+    // TODO necessary??  Might change preference automatically
+        notificationPreference = (CheckBoxPreference) findPreference("pref_notification");
+        notificationPreference.setOnPreferenceChangeListener(this);
 
     }
 
@@ -137,6 +144,15 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             throw new Exception("Required entity attributes missing"); //TODO need to display the error
         }
         return attrs;
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        if (preference == notificationPreference) {
+
+            return true;
+        }
+        return false;
     }
 
 
