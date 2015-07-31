@@ -71,6 +71,11 @@ public class PlayerActivity extends AppCompatActivity {
 
         MenuItem item = menu.findItem(R.id.menu_item_share);
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+        if (mShareActionProvider != null) {
+            setShareIntent();
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -85,8 +90,14 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     // Somewhere in the application.
-    public void doShare(Intent shareIntent) { // TODO implement share
-        // When you want to share set the share intent.
+    public void setShareIntent() { // TODO implement sharing details
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+
+        String shareBody = "Here is the share content body";
+
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         mShareActionProvider.setShareIntent(shareIntent);
     }
 }
