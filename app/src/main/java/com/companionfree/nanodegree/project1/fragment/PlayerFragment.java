@@ -8,18 +8,13 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -30,8 +25,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.activity.SettingsActivity;
+import com.companionfree.nanodegree.project1.activity.PlayerActivity;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
@@ -43,8 +41,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
 
 /**
  * Created by Kyle on 6/6/2015
@@ -107,6 +103,11 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     }
     private void setTrackVisuals() {
         currentTrack = playList.getCurrentTrack();
+
+        Glide.with(getActivity()).load(currentTrack.albumURL)
+                .fitCenter()
+                .into(albumImage);
+
         songTitle.setText(currentTrack.trackName);
         endTime.setText(getTimeString(currentTrack.duration));
         progressBar.setMax((int) currentTrack.duration);
@@ -114,6 +115,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         progressBar.getProgressDrawable().setColorFilter(currentTrack.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
 
         play.setRippleColor(currentTrack.getPaletteColor());
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             int[][] states = new int[][] {
@@ -126,13 +128,16 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
             ColorStateList myList = new ColorStateList(states, colors);
             progressBar.setThumbTintList(myList);
+            ((PlayerActivity)getActivity()).setThemeColors(currentTrack);
 
         } else {
             Drawable d = DrawableCompat.wrap(progressBar.getThumb());
             d.setColorFilter(currentTrack.getPaletteColor(), PorterDuff.Mode.MULTIPLY);
             DrawableCompat.setTint(d, currentTrack.getPaletteColor());
         }
+
     }
+
     private String getTimeString(long millis) {
         long secondsLong = TimeUnit.MILLISECONDS.toSeconds(millis) -
                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis));
@@ -159,6 +164,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             Glide.with(getActivity()).load(currentTrack.albumURL)
                     .fitCenter()
                     .into(albumImage);
+            //TODO move?
         }
 
         if (savedInstanceState != null) {
@@ -180,7 +186,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         } else {
 //            removeError(); TODO
             loadingBar.setVisibility(View.VISIBLE);
-            sendServiceMessage(PlaybackService.ACTION_PLAY); //TODO need some way of playing new song if new
+            sendServiceMessage(PlaybackService.ACTION_PLAY);
         }
 
 
@@ -210,6 +216,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             // TODO need to reload album and name
             playList = event.currentPlaylist;
             setTrackVisuals();
+            ((PlayerActivity)getActivity()).setShareIntent(playList); // TODO need to adapt for tablet
         }
 
     }

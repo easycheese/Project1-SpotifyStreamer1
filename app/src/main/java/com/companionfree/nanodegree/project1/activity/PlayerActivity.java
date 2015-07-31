@@ -13,11 +13,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.Playlist;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * Created by Kyle on 6/6/2015
@@ -25,23 +29,21 @@ import com.companionfree.nanodegree.project1.model.Playlist;
 public class PlayerActivity extends AppCompatActivity {
 
     private ShareActionProvider mShareActionProvider;
+    @InjectView(R.id.toolbar) Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_player);
+
+        ButterKnife.inject(this);
 
         Playlist playlist = getIntent().getExtras().getParcelable(PlayerFragment.PLAYLIST);
         CustomTrack track = playlist.getCurrentTrack();
 
-        setContentView(R.layout.activity_player);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setVisibility(View.VISIBLE);
-        toolbar.setBackgroundColor(track.getPaletteColor());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(track.getPaletteColorDark());
-        }
+        setThemeColors(track);
 
         toolbar.setTitle(track.artistName);
         toolbar.setSubtitle(track.albumName);
@@ -64,6 +66,12 @@ public class PlayerActivity extends AppCompatActivity {
 
     }
 
+    public void setThemeColors(CustomTrack currentTrack) {
+        toolbar.setBackgroundColor(currentTrack.getPaletteColor());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setStatusBarColor(currentTrack.getPaletteColorDark());
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -73,7 +81,7 @@ public class PlayerActivity extends AppCompatActivity {
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
         if (mShareActionProvider != null) {
-            setShareIntent();
+            setShareIntent(null);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -90,14 +98,13 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     // Somewhere in the application.
-    public void setShareIntent() { // TODO implement sharing details
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-
-        String shareBody = "Here is the share content body";
-
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
-        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-        mShareActionProvider.setShareIntent(shareIntent);
+    public void setShareIntent(Playlist playlist) { // TODO implement in tablet
+        if (playlist != null) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + playlist.getCurrentTrack().previewURL);
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
     }
 }
