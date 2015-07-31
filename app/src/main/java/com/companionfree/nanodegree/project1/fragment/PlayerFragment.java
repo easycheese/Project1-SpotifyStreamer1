@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -79,6 +80,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
         return dialog;
     }
 
@@ -100,7 +102,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         play.setOnClickListener(this);
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
-
 
         return rootView;
     }

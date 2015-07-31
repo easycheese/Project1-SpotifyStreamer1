@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment;
@@ -15,7 +12,6 @@ import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
 
-import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 
 public class MainSearchActivity extends AppCompatActivity  {

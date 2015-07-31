@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Xml;
+import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
 
@@ -25,10 +26,8 @@ import java.util.Map;
 /**
  * Created by Laptop on 7/26/2015
  */
-public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener,
-        Preference.OnPreferenceChangeListener {
+public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
-    private CheckBoxPreference notificationPreference;
     public static final String PREF_COUNTRY_CODE = "pref_country_code";
 
     @Override
@@ -38,10 +37,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         Preference countryCode = findPreference("pref_country");
         countryCode.setOnPreferenceClickListener(this);
-
-    // TODO necessary??  Might change preference automatically
-        notificationPreference = (CheckBoxPreference) findPreference("pref_notification");
-        notificationPreference.setOnPreferenceChangeListener(this);
 
     }
 
@@ -79,8 +74,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         builder.setTitle(R.string.pref_country)
                 .setItems(countryNames, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                // The 'which' argument contains the index position
-                // of the selected item
                 Country country = finalCountries.get(which);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 SharedPreferences.Editor edit = prefs.edit();
@@ -145,16 +138,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         }
         return attrs;
     }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (preference == notificationPreference) {
-
-            return true;
-        }
-        return false;
-    }
-
 
     class Country {
         public String code;

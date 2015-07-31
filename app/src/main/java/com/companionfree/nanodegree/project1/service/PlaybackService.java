@@ -90,7 +90,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 mMediaPlayer.start();
 
             } else {
-                mMediaPlayer.prepareAsync();
+//                mMediaPlayer.prepareAsync(); TODO
             }
 
             EventBus.getDefault().post(new MusicStatusEvent(playing, playList));
@@ -160,7 +160,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             builder.addAction(playDrawable, null, getPendingIntent(ACTION_PLAY));
             builder.addAction(R.drawable.ic_skip_next_black_36dp, null, getPendingIntent(ACTION_NEXT));
         }
-
+        builder.setVisibility(Notification.VISIBILITY_SECRET); // TODO
         CustomTrack track = playList.getCurrentTrack();
         String songDescription = track.trackName + " by " + track.artistName;
 
@@ -173,6 +173,8 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         notification.setLatestEventInfo(getApplicationContext(),
                 track.trackName,
                 "by " + track.artistName, pi);
+
+
         startForeground(NOTIFICATION_ID, notification);
 
 //        MediaSessionCompat session = new MediaSessionCompat();
