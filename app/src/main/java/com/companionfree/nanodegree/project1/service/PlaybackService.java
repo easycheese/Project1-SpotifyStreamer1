@@ -5,19 +5,24 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
+import com.companionfree.nanodegree.project1.fragment.SettingsFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.Playlist;
@@ -149,18 +154,31 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
     }
     private void setNotification() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean showNotificationControls = prefs.getBoolean(SettingsFragment.PREF_NOTIFICATION, true);
+
+
         // assign the song name to songName
         PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
                 new Intent(getApplicationContext(), getClass()),
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
         int playDrawable = mMediaPlayer.isPlaying() ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_36dp;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+
+        if (showNotificationControls) {
             builder.addAction(R.drawable.ic_skip_previous_black_36dp, null, getPendingIntent(ACTION_PREV));
             builder.addAction(playDrawable, null, getPendingIntent(ACTION_PLAY));
             builder.addAction(R.drawable.ic_skip_next_black_36dp, null, getPendingIntent(ACTION_NEXT));
         }
-        builder.setVisibility(Notification.VISIBILITY_SECRET); // TODO
+        builder.setVisibility(Notification.VISIBILITY_SECRET); // TODO, try this instead of preventing Notification controls above
+
+        MediaSessionCompat compat = new MediaSessionCompat(this, "tag", null, null);
+
+
+        builder.setStyle(new NotificationCompat.MediaStyle()
+                .setMediaSession(compat.getSessionToken()));
+
+
         CustomTrack track = playList.getCurrentTrack();
         String songDescription = track.trackName + " by " + track.artistName;
 
@@ -174,19 +192,10 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 track.trackName,
                 "by " + track.artistName, pi);
 
-
         startForeground(NOTIFICATION_ID, notification);
 
-//        MediaSessionCompat session = new MediaSessionCompat();
-//
-//        Notification noti = new NotificationCompat.Builder(getApplicationContext())
-//                .setSmallIcon(R.mipmap.ic_launcher)
-//                .setContentTitle("Track title")
-//                .setContentText("Artist - Album")
-//                .setStyle(new NotificationCompat.MediaStyle()
-//                        .setMediaSession(mMediaPlayer))
-//                .build();
     }
+
     private PendingIntent getPendingIntent(String action) {
         Intent i = new Intent(getApplicationContext(), getClass());
         i.setAction(action);

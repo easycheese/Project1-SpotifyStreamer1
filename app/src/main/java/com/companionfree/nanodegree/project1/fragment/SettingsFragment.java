@@ -29,6 +29,7 @@ import java.util.Map;
 public class SettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
 
     public static final String PREF_COUNTRY_CODE = "pref_country_code";
+    public static final String PREF_NOTIFICATION = "pref_notification";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
