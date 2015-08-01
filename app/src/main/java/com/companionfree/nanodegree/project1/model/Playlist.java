@@ -27,7 +27,7 @@ public class Playlist implements Parcelable {
         return playlist.get(position);
     }
 
-    public CustomTrack skipNext() {// TODO crashing
+    public CustomTrack skipNext() {
         if (position == playlist.size()-1) {
             position = 0;
         } else {
@@ -36,7 +36,7 @@ public class Playlist implements Parcelable {
         return getCurrentTrack();
     }
 
-    public CustomTrack skipPrevious() { // TODO crashing
+    public CustomTrack skipPrevious() {
         if (position == 0) {
             position = playlist.size()-1;
         } else {

@@ -4,7 +4,25 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     >
+<!--Had a view and was working TODO linearlayout is missing the button-->
+    <LinearLayout
+        android:id="@+id/player_toolbar_fake"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:visibility="gone">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|right"
+        android:drawable="@drawable/ic_share_black_24dp"
+        style="?android:attr/borderlessButtonStyle"
+        />
+    </LinearLayout>
+
+    <!--android:layout_alignTop="@id/player_toolbar_fake"-->
+    <!--android:layout_alignBottom="@id/player_toolbar_fake"-->
+    <!--android:layout_alignParentRight="true"-->
     <ProgressBar
         android:id="@+id/loading_bar"
         android:layout_width="wrap_content"
@@ -22,6 +40,7 @@
         android:id="@+id/song_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/player_toolbar_fake"
         />
 
     <TextView

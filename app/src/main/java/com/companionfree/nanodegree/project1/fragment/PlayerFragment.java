@@ -1,5 +1,6 @@
 package com.companionfree.nanodegree.project1.fragment;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -66,6 +68,8 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     @InjectView(R.id.time_end) TextView endTime;
     @InjectView(R.id.time_start) TextView currentSongTime;
 
+    @InjectView(R.id.player_toolbar_fake) LinearLayout fakeToolbar;
+
 
     public static PlayerFragment newInstance() {
         return new PlayerFragment();
@@ -93,8 +97,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         }
         playList = bundle.getParcelable(PLAYLIST);
 
-        setTrackVisuals();
-
         play.setOnClickListener(this);
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
@@ -104,8 +106,22 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     private void setTrackVisuals() {
         currentTrack = playList.getCurrentTrack();
 
+        loadingBar.setVisibility(View.VISIBLE);
         Glide.with(getActivity()).load(currentTrack.albumURL)
                 .fitCenter()
+                .listener(new RequestListener<String, GlideDrawable>() {
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        loadingBar.setVisibility(View.GONE);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        loadingBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
                 .into(albumImage);
 
         songTitle.setText(currentTrack.trackName);
@@ -128,7 +144,15 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
             ColorStateList myList = new ColorStateList(states, colors);
             progressBar.setThumbTintList(myList);
-            ((PlayerActivity)getActivity()).setThemeColors(currentTrack);
+
+            Activity activity = getActivity();
+            if (activity instanceof PlayerActivity) { // Single pane
+                ((PlayerActivity)activity).setThemeColors(currentTrack);
+            } else {
+                fakeToolbar.setVisibility(View.VISIBLE);
+                fakeToolbar.setBackgroundColor(currentTrack.getPaletteColor());
+            }
+
 
         } else {
             Drawable d = DrawableCompat.wrap(progressBar.getThumb());
@@ -160,18 +184,13 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (!currentTrack.albumName.equals(CustomTrack.ALBUM_EMPTY)) {
-            Glide.with(getActivity()).load(currentTrack.albumURL)
-                    .fitCenter()
-                    .into(albumImage);
-            //TODO move?
-        }
-
         if (savedInstanceState != null) {
             currentTrack = savedInstanceState.getParcelable(resultsSave);
         } else {
             playMusic();
         }
+
+        setTrackVisuals();
     }
     private void playMusic() {
         ConnectivityManager cm =
