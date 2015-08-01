@@ -8,6 +8,7 @@
     <string name="pref_country">Select Country</string>
 
     <string name="share_url">Spotify Streamer Currently Playing</string>
+    <string name="sharechooser_title">Share Spotify Stream</string>
 
     <string name="error_network_availability">Network Error.  Please check your connection settings.</string>
     <string name="error_no_results">No results found for your search settings, try modifying your search</string>

@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,7 +69,8 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     @InjectView(R.id.time_end) TextView endTime;
     @InjectView(R.id.time_start) TextView currentSongTime;
 
-    @InjectView(R.id.player_toolbar_fake) LinearLayout fakeToolbar;
+    @InjectView(R.id.player_toolbar_fake) View fakeToolbar;
+    @InjectView(R.id.player_sharebutton_fake) Button fakeShareButton; // TODO combine the two and set gone
 
 
     public static PlayerFragment newInstance() {
@@ -100,6 +102,8 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         play.setOnClickListener(this);
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
+
+        fakeShareButton.setOnClickListener(this);
 
         return rootView;
     }
@@ -191,6 +195,8 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         }
 
         setTrackVisuals();
+
+
     }
     private void playMusic() {
         ConnectivityManager cm =
@@ -248,16 +254,20 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
 
-        int id = v.getId();
-        String action = null;
-        if (id == play.getId()) {
-            action = PlaybackService.ACTION_PLAY;
-        } else if (id == previous.getId()) {
-            action = PlaybackService.ACTION_PREV;
-        } else if (id == next.getId()) {
-            action = PlaybackService.ACTION_NEXT;
+        if (v == play) {
+            sendServiceMessage(PlaybackService.ACTION_PLAY);
+        } else if (v == previous) {
+            sendServiceMessage(PlaybackService.ACTION_PREV);
+        } else if (v == next) {
+            sendServiceMessage(PlaybackService.ACTION_NEXT);
+        } else if (v == fakeShareButton) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + currentTrack.previewURL);
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.sharechooser_title)));
         }
-        sendServiceMessage(action);
+
     }
 
     private void sendServiceMessage(String action) {
