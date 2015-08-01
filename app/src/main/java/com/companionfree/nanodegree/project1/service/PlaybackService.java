@@ -90,7 +90,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 mMediaPlayer.start();
 
             } else {
-//                mMediaPlayer.prepareAsync(); TODO
+                mMediaPlayer.prepareAsync();// TODO re-enable if not
             }
 
             EventBus.getDefault().post(new MusicStatusEvent(playing, playList));
@@ -208,6 +208,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             Log.d("Spotify", "MediaPlayer Starting");
             player.start();
             setNotification();
+            EventBus.getDefault().post(new MusicStatusEvent(true, playList)); // TODO only necessary if first song?
         }
 
     @Override

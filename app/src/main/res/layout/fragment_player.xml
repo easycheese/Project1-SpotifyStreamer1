@@ -5,22 +5,22 @@
     android:gravity="center_horizontal"
     >
 
-    <View
+    <LinearLayout
         android:id="@+id/player_toolbar_fake"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        />
-    <Button
-        android:id="@+id/player_sharebutton_fake"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@id/player_toolbar_fake"
-        android:layout_alignBottom="@id/player_toolbar_fake"
-        android:layout_alignParentRight="true"
-        android:drawableRight="@drawable/ic_share_black_24dp"
-        style="?android:attr/borderlessButtonStyle"
-        android:actionViewClass="android.support.v7.widget.SearchView"
-        />
+        android:gravity="right|center_vertical"
+        android:visibility="gone"
+        >
+        <Button
+            android:id="@+id/player_sharebutton_fake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_share_black_24dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:actionViewClass="android.support.v7.widget.SearchView"
+            />
+    </LinearLayout>
  <ProgressBar
         android:id="@+id/loading_bar"
         android:layout_width="wrap_content"

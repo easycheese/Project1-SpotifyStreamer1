@@ -22,7 +22,6 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -55,7 +54,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     protected String resultsSave = "currentTrack";
 
     private Playlist playList;
-    private CustomTrack currentTrack;
 
     @InjectView(R.id.loading_bar) ProgressBar loadingBar;
     @InjectView(R.id.song_image) ImageView albumImage;
@@ -108,7 +106,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         return rootView;
     }
     private void setTrackVisuals() {
-        currentTrack = playList.getCurrentTrack();
+        CustomTrack currentTrack = playList.getCurrentTrack();
 
         loadingBar.setVisibility(View.VISIBLE);
         Glide.with(getActivity()).load(currentTrack.albumURL)
@@ -152,6 +150,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             Activity activity = getActivity();
             if (activity instanceof PlayerActivity) { // Single pane
                 ((PlayerActivity)activity).setThemeColors(currentTrack);
+
             } else {
                 fakeToolbar.setVisibility(View.VISIBLE);
                 fakeToolbar.setBackgroundColor(currentTrack.getPaletteColor());
@@ -180,7 +179,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(resultsSave, currentTrack);
+        outState.putParcelable(resultsSave, playList);
         super.onSaveInstanceState(outState);
     }
 
@@ -189,7 +188,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         super.onActivityCreated(savedInstanceState);
 
         if (savedInstanceState != null) {
-            currentTrack = savedInstanceState.getParcelable(resultsSave);
+            playList = savedInstanceState.getParcelable(resultsSave);
         } else {
             playMusic();
         }
@@ -217,7 +216,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -237,11 +235,11 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         play.setImageResource(id);
 
         CustomTrack serviceCurrentTrack = event.currentPlaylist.getCurrentTrack();
-        if (!currentTrack.id.equals(serviceCurrentTrack.id)) {
+        if (!playList.getCurrentTrack().id.equals(serviceCurrentTrack.id)) {
             // TODO need to reload album and name
             playList = event.currentPlaylist;
             setTrackVisuals();
-            ((PlayerActivity)getActivity()).setShareIntent(playList); // TODO need to adapt for tablet
+            ((PlayerActivity)getActivity()).setShareIntent(playList.getCurrentTrack()); // TODO need to adapt for tablet
         }
 
     }
@@ -264,7 +262,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
-            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + currentTrack.previewURL);
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + playList.getCurrentTrack().previewURL);
             startActivity(Intent.createChooser(shareIntent, getString(R.string.sharechooser_title)));
         }
 

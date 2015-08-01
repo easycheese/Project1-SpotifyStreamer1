@@ -13,7 +13,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
@@ -98,13 +97,13 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     // Somewhere in the application.
-    public void setShareIntent(Playlist playlist) { // TODO implement in tablet
-        if (playlist != null) {
+    public void setShareIntent(CustomTrack currentTrack) { // Broken on phone for first track
+        if (currentTrack != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
-            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + playlist.getCurrentTrack().previewURL);
-            mShareActionProvider.setShareIntent(shareIntent);
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + currentTrack.previewURL);
+            mShareActionProvider.setShareIntent(shareIntent); // This is null on first runthrough
         }
     }
 }
