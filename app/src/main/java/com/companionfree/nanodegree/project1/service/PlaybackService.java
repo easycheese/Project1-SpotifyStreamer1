@@ -50,6 +50,9 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
     private Bitmap largeIcon;
 
+    private String WIFI_LOCK_TAG = "wifiLock";
+    private String MEDIA_SESSION_TAG = "mediaSessionTag";
+
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
 
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -143,7 +146,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
         mMediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
         WifiManager.WifiLock wifiLock = ((WifiManager) getSystemService(Context.WIFI_SERVICE))
-                .createWifiLock(WifiManager.WIFI_MODE_FULL, "mylock");
+                .createWifiLock(WifiManager.WIFI_MODE_FULL, WIFI_LOCK_TAG);
 
         wifiLock.acquire();
 
@@ -193,13 +196,12 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         }
 
 
-        builder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE); // TODO, try this instead of preventing Notification controls above
+        MediaSessionCompat compat = new MediaSessionCompat(this, MEDIA_SESSION_TAG, null, null); // need tag
 
-        MediaSessionCompat compat = new MediaSessionCompat(this, "tag", null, null); // need tag
-
-        NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle().setMediaSession(compat.getSessionToken());
-        style.setMediaSession(compat.getSessionToken());
-//                .setShowCancelButton(true);
+        NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle();
+        style.setMediaSession(compat.getSessionToken())
+                .setShowCancelButton(true)
+        ;
 
         builder.setStyle(style);
 
@@ -218,7 +220,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 track.trackName,
                 "by " + track.artistName, pi);
 
-        startForeground(NOTIFICATION_ID, notification);
+        startForeground(NOTIFICATION_ID, notification); // TODO Make notifaction cancelable somehow
 
     }
 
