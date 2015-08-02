@@ -165,7 +165,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
     }
 
-    private String getTimeString(long millis) {
+    private String getTimeString(long millis) { // TODO fake toolbar needs title of song
         long secondsLong = TimeUnit.MILLISECONDS.toSeconds(millis) -
                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis));
         String secondsString = "" + secondsLong;

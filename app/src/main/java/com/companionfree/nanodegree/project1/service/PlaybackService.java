@@ -6,11 +6,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.session.MediaSession;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -19,8 +18,10 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.SettingsFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
@@ -38,14 +39,16 @@ import de.greenrobot.event.EventBus;
 public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPreparedListener,
         SpotifyMediaPlayer.OnErrorListener, AudioManager.OnAudioFocusChangeListener,
         MediaPlayer.OnCompletionListener {
-        public static final String ACTION_PLAY = "com.companionfree.nanodegree.project1.action.PLAY";
-        public static final String ACTION_PREV = "com.companionfree.nanodegree.project1.action.PREV";
-        public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
 
-        private static final int NOTIFICATION_ID = 355;
-        SpotifyMediaPlayer mMediaPlayer = null;
-        private Playlist playList;
+    public static final String ACTION_PLAY = "com.companionfree.nanodegree.project1.action.PLAY";
+    public static final String ACTION_PREV = "com.companionfree.nanodegree.project1.action.PREV";
+    public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
 
+    private static final int NOTIFICATION_ID = 355;
+    SpotifyMediaPlayer mMediaPlayer = null;
+    private Playlist playList;
+
+    private Bitmap largeIcon;
 
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
 
@@ -116,6 +119,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         setNotification();
     }
     private void playNewTrack() {
+        largeIcon = null;
         setupService();
         handleAction(ACTION_PLAY);
     }
@@ -170,13 +174,34 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             builder.addAction(playDrawable, null, getPendingIntent(ACTION_PLAY));
             builder.addAction(R.drawable.ic_skip_next_black_36dp, null, getPendingIntent(ACTION_NEXT));
         }
-        builder.setVisibility(Notification.VISIBILITY_SECRET); // TODO, try this instead of preventing Notification controls above
-
-        MediaSessionCompat compat = new MediaSessionCompat(this, "tag", null, null);
 
 
-        builder.setStyle(new NotificationCompat.MediaStyle()
-                .setMediaSession(compat.getSessionToken()));
+        if (largeIcon != null) {
+            builder.setLargeIcon(largeIcon);
+        } else {
+            Glide.with(this)
+                    .load(playList.getCurrentTrack().albumURL)
+                    .asBitmap()
+                    .into(new SimpleTarget<Bitmap>(
+                            R.dimen.notification_large_icon_width, R.dimen.notification_large_icon_height) {
+                        @Override
+                        public void onResourceReady(Bitmap bitmap, GlideAnimation anim) {
+                            largeIcon = bitmap;
+                            setNotification();
+                        }
+                    });
+        }
+
+
+        builder.setVisibility(NotificationCompat.VISIBILITY_PRIVATE); // TODO, try this instead of preventing Notification controls above
+
+        MediaSessionCompat compat = new MediaSessionCompat(this, "tag", null, null); // need tag
+
+        NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle().setMediaSession(compat.getSessionToken());
+        style.setMediaSession(compat.getSessionToken());
+//                .setShowCancelButton(true);
+
+        builder.setStyle(style);
 
 
         CustomTrack track = playList.getCurrentTrack();
@@ -186,6 +211,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         Notification notification = builder.build();
 
         notification.icon = R.mipmap.ic_launcher;
+
 
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
         notification.setLatestEventInfo(getApplicationContext(),
