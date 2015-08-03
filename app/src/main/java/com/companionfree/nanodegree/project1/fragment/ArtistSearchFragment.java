@@ -201,8 +201,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         } else {
             displayError(R.string.error_no_search_text, true);
         }
-
-
     }
 
 
@@ -216,7 +214,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public boolean onQueryTextChange(String newText) {
         currentSearchText = newText;
         executeSearch();
-
         return true;
     }
 
@@ -235,8 +232,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-
-        Log.d(getClass().getSimpleName(), "item");
         switch (item.getItemId()) {
             case R.id.menu_settings:
                 Intent i = new Intent(getActivity(), SettingsActivity.class);
@@ -248,10 +243,8 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
 
     private class MyScrollListener extends RecyclerView.OnScrollListener {
-
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-
             getInputMethodManager().hideSoftInputFromWindow(recyclerView.getWindowToken(), 0);
         }
     }

@@ -3,14 +3,12 @@ package com.companionfree.nanodegree.project1.fragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.Xml;
-import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
 

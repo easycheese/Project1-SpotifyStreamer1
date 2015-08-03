@@ -1,6 +1,7 @@
 package com.companionfree.nanodegree.project1.service;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -99,6 +100,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 if (mMediaPlayer.isPlaying()) {
                     mMediaPlayer.pause();
                     playing = false;
+
                 } else if (mMediaPlayer.isPaused()) {
                     mMediaPlayer.start();
 
@@ -217,13 +219,22 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         notification.icon = R.mipmap.ic_launcher;
 
 
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+//        notification.flags |= Notification.FLAG_ONGOING_EVENT; // TODO
+//        stopForeground(true);
+
         notification.setLatestEventInfo(getApplicationContext(),
                 track.trackName,
                 "by " + track.artistName, pi);
 
+
         startForeground(NOTIFICATION_ID, notification); // TODO Make notifaction cancelable somehow
 
+//        NotificationManager mNotificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        mNotificationManager.notify(
+//                5432,
+//                notification);
     }
 
     private PendingIntent getPendingIntent(String action) {

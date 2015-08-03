@@ -7,15 +7,13 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
 import com.companionfree.nanodegree.project1.model.GenericViewHolder;
-import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import kaaes.spotify.webapi.android.models.Artist;
-import kaaes.spotify.webapi.android.models.Image;
 
 
 public class ArtistAdapter extends RecyclerView.Adapter<GenericViewHolder> implements View.OnClickListener{

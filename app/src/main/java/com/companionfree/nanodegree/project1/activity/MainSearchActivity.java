@@ -58,7 +58,7 @@ public class MainSearchActivity extends AppCompatActivity  {
         return mTwoPane;
     }
 
-
+    @SuppressWarnings("unused")
     public void onEvent(ArtistClickEvent event){
         Bundle bundle = new Bundle();
         bundle.putString(TopSongsFragment.ARTIST_NAME, event.artistName);

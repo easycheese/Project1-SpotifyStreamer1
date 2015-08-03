@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Kyle on 6/19/2015.
+ * Created by Kyle on 6/19/2015
  */
 public class Playlist implements Parcelable {
 
@@ -44,15 +44,6 @@ public class Playlist implements Parcelable {
         }
         return getCurrentTrack();
     }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
 
     @Override
     public int describeContents() {

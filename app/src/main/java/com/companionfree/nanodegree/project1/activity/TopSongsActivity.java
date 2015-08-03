@@ -59,6 +59,7 @@ public class TopSongsActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(SongClickEvent event){ //only received in Single pane flow
         Bundle bundle = new Bundle();
         bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
