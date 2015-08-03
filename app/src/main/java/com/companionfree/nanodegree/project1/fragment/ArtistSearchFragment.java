@@ -82,9 +82,13 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     }
 
     private void setupToolbar() {
+        Menu menu2 = toolbar.getMenu();
+        Boolean visibleItems = menu2.hasVisibleItems();
 
+        if (!visibleItems) {
+            toolbar.inflateMenu(R.menu.menu_main);
+        }
 
-        toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setTitle(getString(R.string.app_name));
 
         Menu menu = toolbar.getMenu();

@@ -54,6 +54,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     private String MEDIA_SESSION_TAG = "mediaSessionTag";
 
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
+    // TODO make dismissable notification on pause
 
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -69,7 +70,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 playList = newPlaylist;
             }
 
-            if (!playList.getCurrentTrack().id.equals(newPlaylist.getCurrentTrack().id)) {
+            if (!playList.getCurrentTrack().id.equals(newPlaylist.getCurrentTrack().id)) { //TODO null
                 Log.d(getClass().getSimpleName(), "Stopping song, new playlist loaded");
                 playList = newPlaylist;
                 newPlaylistData = true;
@@ -92,32 +93,33 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     }
 
     private void handleAction(String action) {
-        if (action.equals(ACTION_PLAY)) {
-            boolean playing = true;
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-                playing = false;
-            } else if (mMediaPlayer.isPaused()) {
-                mMediaPlayer.start();
+        switch (action) {
+            case ACTION_PLAY:
+                boolean playing = true;
+                if (mMediaPlayer.isPlaying()) {
+                    mMediaPlayer.pause();
+                    playing = false;
+                } else if (mMediaPlayer.isPaused()) {
+                    mMediaPlayer.start();
 
-            } else {
-                mMediaPlayer.prepareAsync();// TODO re-enable if not
-            }
+                } else {
+                    mMediaPlayer.prepareAsync();// TODO re-enable if not
+                }
 
-            EventBus.getDefault().post(new MusicStatusEvent(playing, playList));
-
-        } else if (action.equals(ACTION_NEXT)) {
-            if (mMediaPlayer != null) {
-                playList.skipNext();
-                playNewTrack();
-            }
-
-        } else if (action.equals(ACTION_PREV)) {
-            if (mMediaPlayer != null) {
-                playList.skipPrevious();
-                playNewTrack();
-
-            }
+                EventBus.getDefault().post(new MusicStatusEvent(playing, playList));
+                break;
+            case ACTION_NEXT:
+                if (mMediaPlayer != null) {
+                    playList.skipNext();
+                    playNewTrack();
+                }
+                break;
+            case ACTION_PREV:
+                if (mMediaPlayer != null) {
+                    playList.skipPrevious();
+                    playNewTrack();
+                }
+                break;
         }
         setNotification();
     }
