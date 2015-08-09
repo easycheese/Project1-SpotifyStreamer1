@@ -39,14 +39,12 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         MenuItemCompat.OnActionExpandListener, Toolbar.OnMenuItemClickListener {
     private String searchState_Save = "search_state";
     private String searchText_Save = "search_text";
-    private String searchKeyboardEnabled_Save = "search_keyboard_enabled";
 
     private ArrayList<CustomArtist> artists;
     private ArtistAdapter artistAdapter;
 
     private static final long SEARCH_DELAY_MILLIS = 500;
     private boolean searchEnabled = false;
-    private boolean searchKeyboardEnabled = false;
     private String currentSearchText = "";
 
     //TODO upon rotation is re-searching instead of loading from savedInstanceState
@@ -102,9 +100,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         if (searchEnabled) {
             searchButton.expandActionView();
             searchView.setQuery(currentSearchText, false);
-            if (!searchKeyboardEnabled) {
-                searchView.clearFocus();
-            }
 
         }
 
@@ -183,7 +178,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         outState.putString(searchText_Save, currentSearchText);
         outState.putBoolean(searchState_Save, searchEnabled);
         outState.putParcelableArrayList(resultsSave, artists);
-        outState.putBoolean(searchKeyboardEnabled_Save, getInputMethodManager().isAcceptingText());
 
         super.onSaveInstanceState(outState);
     }
@@ -195,10 +189,12 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         if (savedInstanceState != null) { // TODO Toolbar is auto searching on rotate
 //            searchEnabled = savedInstanceState.getBoolean(searchState_Save);
             displaySavedError(savedInstanceState);
-//            searchKeyboardEnabled = savedInstanceState.getBoolean(searchKeyboardEnabled_Save);
 //            currentSearchText = savedInstanceState.getString(searchText_Save);
             ArrayList<CustomArtist> artistResults = savedInstanceState.getParcelableArrayList(resultsSave);
             artists.addAll(artistResults);
+
+
+
         } else {
             displayError(R.string.error_no_search_text, true);
         }
