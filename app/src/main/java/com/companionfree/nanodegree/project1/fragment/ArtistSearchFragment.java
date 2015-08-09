@@ -10,7 +10,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,7 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
 import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
@@ -37,9 +35,6 @@ import kaaes.spotify.webapi.android.models.ArtistsPager;
  */
 public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQueryTextListener,
         MenuItemCompat.OnActionExpandListener, Toolbar.OnMenuItemClickListener {
-    private String searchState_Save = "search_state";
-    private String searchText_Save = "search_text";
-
     private ArrayList<CustomArtist> artists;
     private ArtistAdapter artistAdapter;
 
@@ -47,13 +42,12 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     private boolean searchEnabled = false;
     private String currentSearchText = "";
 
-    //TODO upon rotation is re-searching instead of loading from savedInstanceState
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setRetainInstance(true); // TODO put in Base?, prevents re-search
+        setRetainInstance(true); // TODO put in Base?
         setupToolbar();
 
 
@@ -100,7 +94,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         if (searchEnabled) {
             searchButton.expandActionView();
             searchView.setQuery(currentSearchText, false);
-
         }
 
         searchView.setSearchableInfo(searchManager
@@ -175,8 +168,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public void onSaveInstanceState(Bundle outState) {
         killRunningTaskIfExists();
         saveError(outState);
-        outState.putString(searchText_Save, currentSearchText);
-        outState.putBoolean(searchState_Save, searchEnabled);
         outState.putParcelableArrayList(resultsSave, artists);
 
         super.onSaveInstanceState(outState);
@@ -186,14 +177,10 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (savedInstanceState != null) { // TODO Toolbar is auto searching on rotate
-//            searchEnabled = savedInstanceState.getBoolean(searchState_Save);
+        if (savedInstanceState != null) {
             displaySavedError(savedInstanceState);
-//            currentSearchText = savedInstanceState.getString(searchText_Save);
             ArrayList<CustomArtist> artistResults = savedInstanceState.getParcelableArrayList(resultsSave);
             artists.addAll(artistResults);
-
-
 
         } else {
             displayError(R.string.error_no_search_text, true);

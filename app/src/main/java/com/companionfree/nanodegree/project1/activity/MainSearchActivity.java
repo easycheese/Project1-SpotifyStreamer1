@@ -34,10 +34,13 @@ public class MainSearchActivity extends AppCompatActivity  {
             mTwoPane = true;
             mainToolbar = (Toolbar) findViewById(R.id.maintoolbar);
 
-            ArtistSearchFragment fragment = new ArtistSearchFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.artist_search_fragment, fragment)
-                    .commit();
+            if (savedInstanceState == null) { // TODO two pane may need to include ToSongsFragment
+                ArtistSearchFragment fragment = new ArtistSearchFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.artist_search_fragment, fragment)
+                        .commit();
+
+            }
 
             TopSongsFragment topSongsFragment = new TopSongsFragment();
             getSupportFragmentManager().beginTransaction()
