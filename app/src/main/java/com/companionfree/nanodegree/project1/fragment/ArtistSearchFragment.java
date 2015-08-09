@@ -55,7 +55,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
+        setRetainInstance(true); // TODO put in Base?, prevents re-search
         setupToolbar();
 
 
@@ -133,6 +133,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
         if (!isConnected) {
             displayError(R.string.error_network_availability, false);
+            artists.clear();
         } else if (!searchIsEmpty){
             removeError();
             loadingBar.setVisibility(View.VISIBLE);
@@ -193,11 +194,11 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
         if (savedInstanceState != null) { // TODO Toolbar is auto searching on rotate
 //            searchEnabled = savedInstanceState.getBoolean(searchState_Save);
-//            displaySavedError(savedInstanceState);
+            displaySavedError(savedInstanceState);
 //            searchKeyboardEnabled = savedInstanceState.getBoolean(searchKeyboardEnabled_Save);
 //            currentSearchText = savedInstanceState.getString(searchText_Save);
-//            ArrayList<CustomArtist> artistResults = savedInstanceState.getParcelableArrayList(resultsSave);
-//            artists.addAll(artistResults);
+            ArrayList<CustomArtist> artistResults = savedInstanceState.getParcelableArrayList(resultsSave);
+            artists.addAll(artistResults);
         } else {
             displayError(R.string.error_no_search_text, true);
         }
