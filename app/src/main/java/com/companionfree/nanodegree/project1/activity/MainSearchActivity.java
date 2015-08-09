@@ -34,18 +34,19 @@ public class MainSearchActivity extends AppCompatActivity  {
             mTwoPane = true;
             mainToolbar = (Toolbar) findViewById(R.id.maintoolbar);
 
-            if (savedInstanceState == null) { // TODO two pane may need to include ToSongsFragment
+            if (savedInstanceState == null) {
                 ArtistSearchFragment fragment = new ArtistSearchFragment();
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.artist_search_fragment, fragment)
                         .commit();
 
+                TopSongsFragment topSongsFragment = new TopSongsFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.top_songs_list_container, topSongsFragment)
+                        .commit();
             }
+// TODO two pane mode needs to have a different error layout and void out current results
 
-            TopSongsFragment topSongsFragment = new TopSongsFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.top_songs_list_container, topSongsFragment)
-                    .commit();
 
             // In two-pane mode, list items should be given the TODO
             // 'activated' state when touched.
@@ -82,7 +83,7 @@ public class MainSearchActivity extends AppCompatActivity  {
     }
 
 
-
+    @SuppressWarnings("unused")
     public void onEvent(SongClickEvent event){ // only received in Master-Detail flow
         Bundle bundle = new Bundle();
         bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);

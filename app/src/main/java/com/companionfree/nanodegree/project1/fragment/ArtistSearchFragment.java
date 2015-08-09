@@ -47,9 +47,8 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        setRetainInstance(true); // TODO put in Base?
-        setupToolbar();
 
+        setupToolbar();
 
         artists = new ArrayList<>();
         artistAdapter = new ArtistAdapter(artists);

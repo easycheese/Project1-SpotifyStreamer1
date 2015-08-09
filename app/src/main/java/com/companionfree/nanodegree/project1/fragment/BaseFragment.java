@@ -29,7 +29,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 /**
  * Created by Kyle on 6/6/2015
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     protected SpotifyService spotifyService;
     protected AsyncTask searchTask;
@@ -65,6 +65,7 @@ public class BaseFragment extends Fragment {
             toolbar.setVisibility(View.GONE);
             toolbar = ((MainSearchActivity) activity).getMainToolbar();
         }
+        setRetainInstance(true);
 
         return super.onCreateView(inflater, container, savedInstanceState);
     }

@@ -41,8 +41,6 @@ public class TopSongsFragment extends BaseFragment{
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        setupToolbar();
-
         tracks = new ArrayList<>();
         topSongsAdapter = new TopSongsAdapter(tracks);
         recyclerView.setAdapter(topSongsAdapter);
@@ -59,10 +57,7 @@ public class TopSongsFragment extends BaseFragment{
 
         return rootView;
     }
-    private void setupToolbar() {
 
-
-    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
