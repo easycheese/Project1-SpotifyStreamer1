@@ -227,14 +227,14 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 "by " + track.artistName, pi);
 
 
-        startForeground(NOTIFICATION_ID, notification); // TODO Make notifaction cancelable somehow
+//        startForeground(NOTIFICATION_ID, notification); // TODO Make notifaction cancelable somehow
 
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        mNotificationManager.notify(
-//                5432,
-//                notification);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(
+                5432,
+                notification);
     }
 
     private PendingIntent getPendingIntent(String action) {

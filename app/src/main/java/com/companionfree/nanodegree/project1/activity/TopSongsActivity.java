@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
+import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
 
 import butterknife.ButterKnife;
@@ -38,15 +41,16 @@ public class TopSongsActivity extends AppCompatActivity{
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true); //TODO disable menu items
         }
 
+    }
 
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.top_songs_list_container, new TopSongsFragment())
-//                    .commit();
-//        }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -66,6 +70,11 @@ public class TopSongsActivity extends AppCompatActivity{
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
+    }
+
+    @SuppressWarnings("unused") //only received in Single pane flow
+    public void onEvent(MusicStatusEvent event){
+//        nowPlayingButton.setVisible(event.isPlaying); todo
     }
 
     @Override

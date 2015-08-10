@@ -22,10 +22,12 @@ import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
+import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
 
 import java.util.ArrayList;
 
+import de.greenrobot.event.EventBus;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 
@@ -42,6 +44,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     private boolean searchEnabled = false;
     private String currentSearchText = "";
 
+    private MenuItem nowPlayingButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,8 +76,8 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     }
 
     private void setupToolbar() {
-        Menu menu2 = toolbar.getMenu();
-        Boolean visibleItems = menu2.hasVisibleItems();
+        Menu existingMenu = toolbar.getMenu();
+        Boolean visibleItems = existingMenu.hasVisibleItems();
 
         if (!visibleItems) {
             toolbar.inflateMenu(R.menu.menu_main);
@@ -83,6 +86,9 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         toolbar.setTitle(getString(R.string.app_name));
 
         Menu menu = toolbar.getMenu();
+        nowPlayingButton = menu.findItem(R.id.menu_now_playing);
+        nowPlayingButton.setVisible(false);
+
         MenuItem searchButton = menu.findItem(R.id.menu_search);
         MenuItemCompat.setOnActionExpandListener(searchButton, this);
 
@@ -186,7 +192,22 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
 
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @SuppressWarnings("unused")
+    public void onEvent(MusicStatusEvent event){
+        nowPlayingButton.setVisible(event.isPlaying);
+    }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -219,6 +240,9 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
             case R.id.menu_settings:
                 Intent i = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(i);
+                return true;
+            case R.id.menu_now_playing: // TODO add to top songs
+                // TODO launch player frag
                 return true;
         }
         return false;

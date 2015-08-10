@@ -29,7 +29,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 /**
  * Created by Kyle on 6/6/2015
  */
-public abstract class BaseFragment extends Fragment {
+public class BaseFragment extends Fragment {
 
     protected SpotifyService spotifyService;
     protected AsyncTask searchTask;

@@ -6,9 +6,19 @@
         android:title="@string/menu_search"
         android:icon="@drawable/ic_search_black_24dp"
         app:showAsAction="collapseActionView|ifRoom"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        android:orderInCategory="1"
+        />
+
+    <item android:id="@+id/menu_now_playing"
+        android:title="@string/menu_now_playing"
+        android:icon="@drawable/ic_play_arrow_black_24dp"
+        app:showAsAction="always"
+        android:orderInCategory="2"
+ />
 
     <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:orderInCategory="3"/>
 </menu>
