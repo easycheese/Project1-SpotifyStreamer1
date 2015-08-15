@@ -73,7 +73,9 @@ public class TopSongsFragment extends BaseFragment{
         if (savedInstanceState != null) {
             displaySavedError(savedInstanceState);
             ArrayList<CustomTrack> customTracks = savedInstanceState.getParcelableArrayList(resultsSave);
-            tracks.addAll(customTracks);
+            if (customTracks != null) {
+                tracks.addAll(customTracks);
+            }
         } else {
             executeSearch();
         }
@@ -101,7 +103,6 @@ public class TopSongsFragment extends BaseFragment{
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 String countryCode = prefs.getString(SettingsFragment.PREF_COUNTRY_CODE, "us");
                 Map<String, Object> options = new HashMap<>();
-//                options.put("country", countryCode.toUpperCase());
                 options.put("country", countryCode);
                 try {
                     Tracks results = spotifyService.getArtistTopTrack(artistId, options);

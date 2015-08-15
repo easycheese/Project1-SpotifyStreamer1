@@ -46,13 +46,13 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
 
     private static final int NOTIFICATION_ID = 355;
-    SpotifyMediaPlayer mMediaPlayer = null;
-    private Playlist playList;
+    private static SpotifyMediaPlayer mMediaPlayer = null;
+    private static Playlist playList;
 
-    private Bitmap largeIcon;
+    private static Bitmap largeIcon;
 
-    private String WIFI_LOCK_TAG = "wifiLock";
-    private String MEDIA_SESSION_TAG = "mediaSessionTag";
+    private static String WIFI_LOCK_TAG = "wifiLock";
+    private static String MEDIA_SESSION_TAG = "mediaSessionTag";
 
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
     // TODO make dismissable notification on pause
@@ -93,6 +93,14 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         return START_NOT_STICKY;
     }
 
+    public static Playlist getCurrentPlaylist() {
+        return (playList != null) ? playList : null;
+    }
+
+    public static boolean isPlaying() {
+        return (mMediaPlayer != null && mMediaPlayer.isPlaying()) ;
+    }
+
     private void handleAction(String action) {
         switch (action) {
             case ACTION_PLAY:
@@ -105,7 +113,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                     mMediaPlayer.start();
 
                 } else {
-                    mMediaPlayer.prepareAsync();// TODO re-enable if not
+                    mMediaPlayer.prepareAsync();
                 }
 
                 EventBus.getDefault().post(new MusicStatusEvent(playing, playList));

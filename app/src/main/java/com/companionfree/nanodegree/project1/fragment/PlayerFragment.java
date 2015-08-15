@@ -105,6 +105,8 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
         return rootView;
     }
+
+
     private void setTrackVisuals() {
         CustomTrack currentTrack = playList.getCurrentTrack();
 
@@ -194,7 +196,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         }
 
         setTrackVisuals();
-
 
     }
     private void playMusic() {

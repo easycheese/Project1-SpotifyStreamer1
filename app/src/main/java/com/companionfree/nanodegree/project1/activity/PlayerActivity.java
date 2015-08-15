@@ -18,6 +18,7 @@ import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.Playlist;
+import com.companionfree.nanodegree.project1.service.PlaybackService;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -64,6 +65,8 @@ public class PlayerActivity extends AppCompatActivity {
 //        }
 
     }
+
+
 
     public void setThemeColors(CustomTrack currentTrack) {
         toolbar.setBackgroundColor(currentTrack.getPaletteColor());

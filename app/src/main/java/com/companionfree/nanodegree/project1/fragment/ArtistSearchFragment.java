@@ -134,6 +134,18 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        nowPlayingButton.setVisible(PlaybackService.isPlaying());
+    }
+
+    @SuppressWarnings("unused")
+    public void onEvent(MusicStatusEvent event){
+        nowPlayingButton.setVisible(event.isPlaying);
+    }
+
+
     private AsyncTask<Void, Void, Void> getSearchTask() {
         return new AsyncTask<Void, Void, Void>() {
             @Override
@@ -185,7 +197,9 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         if (savedInstanceState != null) {
             displaySavedError(savedInstanceState);
             ArrayList<CustomArtist> artistResults = savedInstanceState.getParcelableArrayList(resultsSave);
-            artists.addAll(artistResults);
+            if (artistResults!= null) {
+                artists.addAll(artistResults);
+            }
 
         } else {
             displayError(R.string.error_no_search_text, true);
@@ -202,11 +216,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
-    }
-
-    @SuppressWarnings("unused")
-    public void onEvent(MusicStatusEvent event){
-        nowPlayingButton.setVisible(event.isPlaying);
     }
 
     @Override

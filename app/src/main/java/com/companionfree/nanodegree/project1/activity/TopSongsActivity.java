@@ -14,6 +14,7 @@ import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
+import com.companionfree.nanodegree.project1.service.PlaybackService;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -25,6 +26,7 @@ import de.greenrobot.event.EventBus;
 public class TopSongsActivity extends AppCompatActivity{
 
     @InjectView(R.id.toolbar) Toolbar toolbar;
+    private MenuItem nowPlayingButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,11 @@ public class TopSongsActivity extends AppCompatActivity{
 
         Intent i = getIntent();
         String artistName = i.getStringExtra(TopSongsFragment.ARTIST_NAME);
+
+        setupToolbar(artistName);
+    }
+
+    private void setupToolbar(String artistName) {
         toolbar.setSubtitle(artistName);
         toolbar.setTitle(getString(R.string.top_tracks));
 
@@ -41,7 +48,7 @@ public class TopSongsActivity extends AppCompatActivity{
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true); //TODO disable menu items
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
     }
@@ -50,6 +57,16 @@ public class TopSongsActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
+
+        MenuItem search = menu.findItem(R.id.menu_search);
+        search.setVisible(false);
+
+        MenuItem settings = menu.findItem(R.id.menu_settings);
+        settings.setVisible(false);
+
+        nowPlayingButton = menu.findItem(R.id.menu_now_playing);
+        nowPlayingButton.setVisible(false);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -74,9 +91,16 @@ public class TopSongsActivity extends AppCompatActivity{
 
     @SuppressWarnings("unused") //only received in Single pane flow
     public void onEvent(MusicStatusEvent event){
-//        nowPlayingButton.setVisible(event.isPlaying); todo
+        nowPlayingButton.setVisible(event.isPlaying);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (nowPlayingButton != null) {
+            nowPlayingButton.setVisible(PlaybackService.isPlaying());
+        }
+    }
     @Override
     public void onStart() {
         super.onStart();

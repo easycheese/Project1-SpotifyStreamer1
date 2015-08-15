@@ -28,7 +28,8 @@
         <activity android:name=".activity.TopSongsActivity"  />
 
         <activity android:name=".activity.PlayerActivity"
-            android:label="@string/app_name"/>
+            android:label="@string/app_name"
+            />
         <service android:name=".service.PlaybackService" />
     </application>
 
