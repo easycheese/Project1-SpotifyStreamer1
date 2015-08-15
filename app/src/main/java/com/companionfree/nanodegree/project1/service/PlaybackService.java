@@ -144,7 +144,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 stopSelf();
                 break;
         }
-        if (action != ACTION_STOP_SERVICE) {
+        if (action.equals(ACTION_STOP_SERVICE)) {
             setNotification();
         }
     }
@@ -267,6 +267,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     @Override
     public void onDestroy() {
         if (mMediaPlayer != null) mMediaPlayer.release();
+        super.onDestroy();
     }
 
     @Override

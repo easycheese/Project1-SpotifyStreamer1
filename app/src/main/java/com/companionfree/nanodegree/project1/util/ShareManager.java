@@ -7,7 +7,7 @@ import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 
 /**
- * Created by Kyle on 8/15/2015.
+ * Created by Kyle on 8/15/2015
  */
 public class ShareManager {
 

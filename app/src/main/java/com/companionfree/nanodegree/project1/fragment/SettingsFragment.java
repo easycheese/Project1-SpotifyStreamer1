@@ -13,9 +13,7 @@ import android.util.Xml;
 import com.companionfree.nanodegree.project1.R;
 
 import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,11 +50,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             xmlpullparser.setInput(in_s, null);
 
             countries = parseXML(xmlpullparser);
-        } catch (XmlPullParserException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) { // TODO work out these for display?
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -1,7 +1,6 @@
 package com.companionfree.nanodegree.project1.util;
 
 import android.media.MediaPlayer;
-import android.util.Log;
 
 import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
 

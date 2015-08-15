@@ -7,9 +7,9 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.companionfree.nanodegree.project1.R;
-import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
 import com.companionfree.nanodegree.project1.adapter.TopSongsAdapter;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.util.ConnectionManager;
@@ -97,6 +97,7 @@ public class TopSongsFragment extends BaseFragment{
     }
     private AsyncTask<Void, Void, Void> getSearchTask() {
         return new AsyncTask<Void, Void, Void>() {
+            RetrofitError error;
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -115,7 +116,7 @@ public class TopSongsFragment extends BaseFragment{
                     }
 
                 } catch (RetrofitError error) { // timeout errors
-                    // TODO (and in other fragment)
+                    this.error = error;
                 }
 
                 return null;
@@ -124,12 +125,17 @@ public class TopSongsFragment extends BaseFragment{
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                topSongsAdapter.notifyDataSetChanged();
-                loadingBar.setVisibility(View.GONE);
+                if (error != null) {
+                    Toast.makeText(getActivity(), getActivity().getString(R.string.error_network_availability), Toast.LENGTH_SHORT).show();
+                } else {
+                    topSongsAdapter.notifyDataSetChanged();
+                    loadingBar.setVisibility(View.GONE);
 
-                if (tracks != null && tracks.isEmpty()) {
-                    displayError(R.string.error_no_results_tracks, false);
+                    if (tracks != null && tracks.isEmpty()) {
+                        displayError(R.string.error_no_results_tracks, false);
+                    }
                 }
+
             }
         };
     }
