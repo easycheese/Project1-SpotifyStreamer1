@@ -57,7 +57,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
     private boolean isSkipping = false;
 
-    // TODO make dismissable notification on pause
 
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -129,7 +128,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 break;
             case ACTION_PREV:
                 if (mMediaPlayer != null) {
-                    playlist.skipPrevious(); // TODO fragment player only getting the updates about the first skip, creating new player fragments?
+                    playlist.skipPrevious();
                     isSkipping = true;
                     playNewTrack();
                 }
@@ -239,7 +238,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 "by " + track.artistName, pi);
 
 
-//        startForeground(NOTIFICATION_ID, notification); // TODO Make notifaction cancelable somehow
+//        startForeground(NOTIFICATION_ID, notification); // TODO Make notifaction cancelable somehow on pause
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
