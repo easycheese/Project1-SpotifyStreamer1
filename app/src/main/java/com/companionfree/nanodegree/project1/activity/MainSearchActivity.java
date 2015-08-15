@@ -14,7 +14,9 @@ import com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
+import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
+import com.companionfree.nanodegree.project1.service.PlaybackService;
 import com.companionfree.nanodegree.project1.util.ConnectionManager;
 import com.companionfree.nanodegree.project1.util.ErrorManager;
 
@@ -72,6 +74,14 @@ public class MainSearchActivity extends AppCompatActivity  {
 //            ((TopSongsFragment) getSupportFragmentManager()
 //                    .findFragmentById(R.id.artist_search_fragment))
 //            .setActivateOnItemClick(true);
+
+            if (getIntent().getAction() == PlaybackService.ACTION_OPEN_PLAYER) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(PlayerFragment.PLAYLIST, getIntent().getParcelableExtra(PlaybackService.BUNDLE_PLAYLIST));
+                bundle.putBoolean(PlayerFragment.RESUMING_PLAYER, true);
+                launchPlayer(bundle);
+            }
+
         }
     }
     public Toolbar getMainToolbar() {

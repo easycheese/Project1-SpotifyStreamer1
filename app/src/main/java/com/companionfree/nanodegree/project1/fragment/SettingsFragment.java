@@ -133,7 +133,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
             }
         }
         else {
-            throw new Exception("Required entity attributes missing"); //TODO need to display the error
+            throw new Exception("Required entity attributes missing");
         }
         return attrs;
     }

@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.SettingsFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
@@ -45,6 +46,10 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     public static final String ACTION_PLAY = "com.companionfree.nanodegree.project1.action.PLAY";
     public static final String ACTION_PREV = "com.companionfree.nanodegree.project1.action.PREV";
     public static final String ACTION_NEXT = "com.companionfree.nanodegree.project1.action.NEXT";
+    public static final String ACTION_STOP_SERVICE = "com.companionfree.nanodegree.project1.action.STOP_SERVICE";
+    public static final String ACTION_OPEN_PLAYER = "com.companionfree.nanodegree.project1.action.OPEN_PLAYER";
+
+    public static final String BUNDLE_PLAYLIST = "playlist";
 
     private static final int NOTIFICATION_ID = 355;
     private static SpotifyMediaPlayer mMediaPlayer = null;
@@ -82,7 +87,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             Log.d(getClass().getSimpleName(), "Song url: " + playlist.getCurrentTrack().trackName);
         }
 
-//        if (mMediaPlayer == null || existingPlaylistOverwritten) {
         if (mMediaPlayer == null || newPlaylistData) {
 
             Log.d(getClass().getSimpleName(), "Setting up new service");
@@ -133,8 +137,16 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                     playNewTrack();
                 }
                 break;
+            case ACTION_STOP_SERVICE:
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+                EventBus.getDefault().post(new MusicStatusEvent(false, playlist, false));
+                stopSelf();
+                break;
         }
-        setNotification();
+        if (action != ACTION_STOP_SERVICE) {
+            setNotification();
+        }
     }
     private void playNewTrack() {
         largeIcon = null;
@@ -179,12 +191,8 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean showNotificationControls = prefs.getBoolean(SettingsFragment.PREF_NOTIFICATION, true);
 
-
-        // assign the song name to songName
-        PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0,
-                new Intent(getApplicationContext(), getClass()),
-                PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+
         int playDrawable = mMediaPlayer.isPlaying() ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_36dp;
 
         if (showNotificationControls) {
@@ -215,37 +223,39 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
         NotificationCompat.MediaStyle style = new NotificationCompat.MediaStyle();
         style.setMediaSession(compat.getSessionToken())
-                .setShowCancelButton(true)
-        ;
+                .setShowCancelButton(true);
 
         builder.setStyle(style);
 
-
         CustomTrack track = playlist.getCurrentTrack();
-        String songDescription = track.trackName + " by " + track.artistName;
 
-        builder.setContentTitle(songDescription);
+        builder.setContentTitle(track.trackName);
+        builder.setContentText(" by " + track.artistName);
+
+        Intent deleteIntent = new Intent( getApplicationContext(), PlaybackService.class );
+        deleteIntent.setAction(ACTION_STOP_SERVICE);
+        PendingIntent deletePI = PendingIntent.getService(getApplicationContext(), 1, deleteIntent, 0);
+        builder.setDeleteIntent(deletePI);
+
+        Intent openIntent = new Intent( getApplicationContext(), MainSearchActivity.class );
+        openIntent.setAction(ACTION_OPEN_PLAYER);
+        openIntent.putExtra(BUNDLE_PLAYLIST, playlist);
+        PendingIntent openPI = PendingIntent.getActivity(getApplicationContext(), 14, openIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(openPI);
+
         Notification notification = builder.build();
 
         notification.icon = R.mipmap.ic_launcher;
 
+        if (isPlaying()) {
+            notification.flags |= Notification.FLAG_FOREGROUND_SERVICE;
+            startForeground(NOTIFICATION_ID, notification);
+        } else {
+            stopForeground(false);
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(NOTIFICATION_ID, notification);
+        }
 
-//        notification.flags |= Notification.FLAG_ONGOING_EVENT; // TODO
-//        stopForeground(true);
-
-        notification.setLatestEventInfo(getApplicationContext(),
-                track.trackName,
-                "by " + track.artistName, pi);
-
-
-//        startForeground(NOTIFICATION_ID, notification); // TODO Make notifaction cancelable somehow on pause
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        mNotificationManager.notify(
-                5432,
-                notification);
     }
 
     private PendingIntent getPendingIntent(String action) {
@@ -321,5 +331,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     public void onCompletion(MediaPlayer mp) {
         Log.d(getClass().getSimpleName(), "music stopped");
         EventBus.getDefault().post(new MusicStatusEvent(false, playlist, false));
+        setNotification();
     }
 }

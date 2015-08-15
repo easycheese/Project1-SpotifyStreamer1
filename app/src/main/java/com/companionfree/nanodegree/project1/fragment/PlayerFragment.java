@@ -119,7 +119,7 @@ public class PlayerFragment extends DialogFragment implements MenuItem.OnMenuIte
 
         toolbar.setTitle(currentTrack.artistName);
         toolbar.setSubtitle(currentTrack.albumName);
-        
+
         loadingBar.setVisibility(View.VISIBLE);
         Glide.with(getActivity()).load(currentTrack.albumURL)
                 .fitCenter()
@@ -176,7 +176,7 @@ public class PlayerFragment extends DialogFragment implements MenuItem.OnMenuIte
 
     }
 
-    private String getTimeString(long millis) { // TODO fake toolbar needs title of song
+    private String getTimeString(long millis) {
         long secondsLong = TimeUnit.MILLISECONDS.toSeconds(millis) -
                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis));
         String secondsString = "" + secondsLong;
