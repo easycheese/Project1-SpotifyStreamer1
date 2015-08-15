@@ -19,6 +19,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
+import com.companionfree.nanodegree.project1.activity.PlayerActivity;
 import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
@@ -250,8 +252,15 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
                 Intent i = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(i);
                 return true;
-            case R.id.menu_now_playing: // TODO add to top songs
-                // TODO launch player frag
+            case R.id.menu_now_playing:
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(PlayerFragment.RESUMING_PLAYER, true);
+
+                ((MainSearchActivity) getActivity()).launchPlayer(bundle);
+
+
+
+
                 return true;
         }
         return false;

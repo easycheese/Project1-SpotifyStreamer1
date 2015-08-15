@@ -38,7 +38,17 @@ public class PlayerActivity extends AppCompatActivity {
 
         ButterKnife.inject(this);
 
-        Playlist playlist = getIntent().getExtras().getParcelable(PlayerFragment.PLAYLIST);
+
+
+        Bundle bundle = getIntent().getExtras();
+        boolean isResuming = bundle.getBoolean(PlayerFragment.RESUMING_PLAYER);
+        Playlist playlist;
+        if (isResuming) {
+            playlist = PlaybackService.getCurrentPlaylist();
+        } else {
+            playlist = bundle.getParcelable(PlayerFragment.PLAYLIST);
+        }
+
         CustomTrack track = playlist.getCurrentTrack();
 
         toolbar.setVisibility(View.VISIBLE);

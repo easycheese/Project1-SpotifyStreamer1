@@ -23,7 +23,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Kyle on 6/5/2015
  */
-public class TopSongsActivity extends AppCompatActivity{
+public class TopSongsActivity extends AppCompatActivity implements MenuItem.OnMenuItemClickListener {
 
     @InjectView(R.id.toolbar) Toolbar toolbar;
     private MenuItem nowPlayingButton;
@@ -66,6 +66,7 @@ public class TopSongsActivity extends AppCompatActivity{
 
         nowPlayingButton = menu.findItem(R.id.menu_now_playing);
         nowPlayingButton.setVisible(false);
+        nowPlayingButton.setOnMenuItemClickListener(this);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -84,6 +85,9 @@ public class TopSongsActivity extends AppCompatActivity{
     public void onEvent(SongClickEvent event){ //only received in Single pane flow
         Bundle bundle = new Bundle();
         bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
+        launchPlayer(bundle);
+    }
+    private void launchPlayer(Bundle bundle) {
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
@@ -111,5 +115,16 @@ public class TopSongsActivity extends AppCompatActivity{
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if (item == nowPlayingButton) {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(PlayerFragment.RESUMING_PLAYER, true);
+            launchPlayer(bundle);
+            return true;
+        }
+        return false;
     }
 }

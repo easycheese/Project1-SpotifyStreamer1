@@ -47,7 +47,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
     private static final int NOTIFICATION_ID = 355;
     private static SpotifyMediaPlayer mMediaPlayer = null;
-    private static Playlist playList;
+    private static Playlist playlist;
 
     private static Bitmap largeIcon;
 
@@ -66,19 +66,19 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         if (bundle != null) {
             Playlist newPlaylist = bundle.getParcelable(PlayerFragment.PLAYLIST);
 
-            if (playList == null) {
+            if (playlist == null) {
                 Log.d(getClass().getSimpleName(), "Starting new session");
-                playList = newPlaylist;
+                playlist = newPlaylist;
             }
 
-            if (!playList.getCurrentTrack().id.equals(newPlaylist.getCurrentTrack().id)) { //TODO null
+            if (!playlist.getCurrentTrack().id.equals(newPlaylist.getCurrentTrack().id)) { //TODO null
                 Log.d(getClass().getSimpleName(), "Stopping song, new playlist loaded");
-                playList = newPlaylist;
+                playlist = newPlaylist;
                 newPlaylistData = true;
                 mMediaPlayer.stop();
             }
 
-            Log.d(getClass().getSimpleName(), "Song url: " + playList.getCurrentTrack().trackName);
+            Log.d(getClass().getSimpleName(), "Song url: " + playlist.getCurrentTrack().trackName);
         }
 
 //        if (mMediaPlayer == null || existingPlaylistOverwritten) {
@@ -94,7 +94,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     }
 
     public static Playlist getCurrentPlaylist() {
-        return (playList != null) ? playList : null;
+        return (playlist != null) ? playlist : null;
     }
 
     public static boolean isPlaying() {
@@ -116,17 +116,17 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                     mMediaPlayer.prepareAsync();
                 }
 
-                EventBus.getDefault().post(new MusicStatusEvent(playing, playList));
+                EventBus.getDefault().post(new MusicStatusEvent(playing, playlist));
                 break;
             case ACTION_NEXT:
                 if (mMediaPlayer != null) {
-                    playList.skipNext();
+                    playlist.skipNext();
                     playNewTrack();
                 }
                 break;
             case ACTION_PREV:
                 if (mMediaPlayer != null) {
-                    playList.skipPrevious();
+                    playlist.skipPrevious();
                     playNewTrack();
                 }
                 break;
@@ -151,7 +151,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            mMediaPlayer.setDataSource(playList.getCurrentTrack().previewURL);
+            mMediaPlayer.setDataSource(playlist.getCurrentTrack().previewURL);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -195,7 +195,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             builder.setLargeIcon(largeIcon);
         } else {
             Glide.with(this)
-                    .load(playList.getCurrentTrack().albumURL)
+                    .load(playlist.getCurrentTrack().albumURL)
                     .asBitmap()
                     .into(new SimpleTarget<Bitmap>(
                             R.dimen.notification_large_icon_width, R.dimen.notification_large_icon_height) {
@@ -218,7 +218,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         builder.setStyle(style);
 
 
-        CustomTrack track = playList.getCurrentTrack();
+        CustomTrack track = playlist.getCurrentTrack();
         String songDescription = track.trackName + " by " + track.artistName;
 
         builder.setContentTitle(songDescription);
@@ -266,7 +266,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             Log.d("Spotify", "MediaPlayer Starting");
             player.start();
             setNotification();
-            EventBus.getDefault().post(new MusicStatusEvent(true, playList)); // TODO only necessary if first song?
+            EventBus.getDefault().post(new MusicStatusEvent(true, playlist)); // TODO only necessary if first song?
         }
 
     @Override
@@ -275,7 +275,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         // The MediaPlayer has moved to the Error state, must be reset!
         Log.d("Spotify", "MediaPlayer Error, resetting");
         mp.reset();
-        EventBus.getDefault().post(new MusicStatusEvent(false, playList));
+        EventBus.getDefault().post(new MusicStatusEvent(false, playlist));
         return false;
     }
 
@@ -316,6 +316,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.d(getClass().getSimpleName(), "music stopped");
-        EventBus.getDefault().post(new MusicStatusEvent(false, playList));
+        EventBus.getDefault().post(new MusicStatusEvent(false, playlist));
     }
 }

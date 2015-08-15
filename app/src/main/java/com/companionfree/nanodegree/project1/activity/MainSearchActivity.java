@@ -87,9 +87,18 @@ public class MainSearchActivity extends AppCompatActivity  {
     public void onEvent(SongClickEvent event){ // only received in Master-Detail flow
         Bundle bundle = new Bundle();
         bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
-        PlayerFragment songFragment = PlayerFragment.newInstance();
-        songFragment.setArguments(bundle);
-        songFragment.show(getSupportFragmentManager(), getClass().getSimpleName());
+        launchPlayer(bundle);
+    }
+    public void launchPlayer(Bundle bundle) {
+        if (isTwoPane()) {
+            PlayerFragment songFragment = PlayerFragment.newInstance();
+            songFragment.setArguments(bundle);
+            songFragment.show(getSupportFragmentManager(), getClass().getSimpleName());
+        } else {
+            Intent intent = new Intent(this, PlayerActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
     @Override

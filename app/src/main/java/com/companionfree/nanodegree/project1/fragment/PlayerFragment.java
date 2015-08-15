@@ -50,6 +50,7 @@ import de.greenrobot.event.EventBus;
 public class PlayerFragment extends DialogFragment implements View.OnClickListener{
 
     public static final String PLAYLIST = "playlist";
+    public static final String RESUMING_PLAYER = "resuming";
 
     protected String resultsSave = "currentTrack";
 
@@ -70,6 +71,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     @InjectView(R.id.player_toolbar_fake) View fakeToolbar;
     @InjectView(R.id.player_sharebutton_fake) Button fakeShareButton; // TODO combine the two and set gone
 
+    private boolean isResuming = false;
 
     public static PlayerFragment newInstance() {
         return new PlayerFragment();
@@ -95,8 +97,15 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         if (bundle == null) { // Single pane layout
             bundle = getActivity().getIntent().getExtras();
         }
-        playList = bundle.getParcelable(PLAYLIST);
 
+        isResuming = bundle.getBoolean(RESUMING_PLAYER);
+        if (isResuming) {
+            playList = PlaybackService.getCurrentPlaylist();
+        } else {
+            playList = bundle.getParcelable(PLAYLIST);
+        }
+
+        setPlayButtonDrawable(isResuming);
         play.setOnClickListener(this);
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
@@ -192,7 +201,9 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         if (savedInstanceState != null) {
             playList = savedInstanceState.getParcelable(resultsSave);
         } else {
-            playMusic();
+            if (!isResuming) {
+                playMusic();
+            }
         }
 
         setTrackVisuals();
@@ -232,8 +243,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     // This method will be called when a MusicStatusEvent is posted
     public void onEvent(MusicStatusEvent event){
 
-        int id = (event.isPlaying) ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_24dp;
-        play.setImageResource(id);
+        setPlayButtonDrawable(event.isPlaying);
 
         CustomTrack serviceCurrentTrack = event.currentPlaylist.getCurrentTrack();
         if (!playList.getCurrentTrack().id.equals(serviceCurrentTrack.id)) {
@@ -242,7 +252,11 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             setTrackVisuals();
             ((PlayerActivity)getActivity()).setShareIntent(playList.getCurrentTrack()); // TODO need to adapt for tablet
         }
+    }
 
+    private void setPlayButtonDrawable(boolean isPlaying) {
+        int id = (isPlaying) ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_24dp;
+        play.setImageResource(id);
     }
     public void onEventMainThread(MusicStatusTimeEvent event) {
         progressBar.setProgress(event.progress);
