@@ -63,17 +63,6 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
         rootView.setFocusableInTouchMode(true);
         rootView.requestFocus();
 
-        // TODO remove
-        Button b = (Button) rootView.findViewById(R.id.kill);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), PlaybackService.class);
-                getActivity().stopService(i);
-            }
-        });
-
-
         return rootView;
     }
 
