@@ -32,6 +32,8 @@ public class PlayerActivity extends AppCompatActivity {
 
     @InjectView(R.id.toolbar) Toolbar toolbar;
 
+    private CustomTrack track;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,14 +52,16 @@ public class PlayerActivity extends AppCompatActivity {
             playlist = bundle.getParcelable(PlayerFragment.PLAYLIST);
         }
 
-        CustomTrack track = playlist.getCurrentTrack();
+        if (playlist != null) {
+            track = playlist.getCurrentTrack();
+            setThemeColors(track);
+            toolbar.setTitle(track.artistName);
+            toolbar.setSubtitle(track.albumName);
+        }
 
         toolbar.setVisibility(View.VISIBLE);
 
-        setThemeColors(track);
 
-        toolbar.setTitle(track.artistName);
-        toolbar.setSubtitle(track.albumName);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -69,12 +73,6 @@ public class PlayerActivity extends AppCompatActivity {
         PlayerFragment newFragment = PlayerFragment.newInstance();
         ft.add(R.id.embedded, newFragment);
         ft.commit();
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.top_songs_list_container, new PlayerFragment())
-//                    .commit();
-//        }
-
     }
 
 
@@ -94,7 +92,7 @@ public class PlayerActivity extends AppCompatActivity {
         mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
 
         if (mShareActionProvider != null) {
-            setShareIntent(null);
+            setShareIntent(track);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -110,14 +108,14 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // Somewhere in the application.
-    public void setShareIntent(CustomTrack currentTrack) { // Broken on phone for first track
+
+    public void setShareIntent(CustomTrack currentTrack) {
         if (currentTrack != null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
             shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
             shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + currentTrack.previewURL);
-            mShareActionProvider.setShareIntent(shareIntent); // This is null on first runthrough
+            mShareActionProvider.setShareIntent(shareIntent);
         }
     }
 }

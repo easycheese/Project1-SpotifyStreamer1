@@ -6,7 +6,6 @@
 
     <include layout="@layout/my_toolbar"
         android:id="@+id/toolbar"
-        android:visibility="gone"
         />
     <FrameLayout
         android:layout_width="match_parent"

@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,8 +66,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     @InjectView(R.id.time_end) TextView endTime;
     @InjectView(R.id.time_start) TextView currentSongTime;
 
-    @InjectView(R.id.player_toolbar_fake) View fakeToolbar;
-    @InjectView(R.id.player_sharebutton_fake) Button fakeShareButton; // TODO combine the two and set gone
+    @InjectView(R.id.toolbar)Toolbar toolbar;
 
     private boolean isResuming = false;
 
@@ -107,7 +107,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
 
-        fakeShareButton.setOnClickListener(this);
+//        fakeShareButton.setOnClickListener(this); TODO
 
         return rootView;
     }
@@ -160,8 +160,8 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
                 ((PlayerActivity)activity).setThemeColors(currentTrack);
 
             } else {
-                fakeToolbar.setVisibility(View.VISIBLE);
-                fakeToolbar.setBackgroundColor(currentTrack.getPaletteColor());
+//                fakeToolbar.setVisibility(View.VISIBLE); TODO
+//                fakeToolbar.setBackgroundColor(currentTrack.getPaletteColor());
             }
 
 
@@ -204,6 +204,10 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             }
         }
 
+        if (getActivity() instanceof PlayerActivity) {
+            toolbar.setVisibility(View.GONE);
+        }
+        toolbar.inflateMenu(R.menu.menu_player);
         setTrackVisuals();
 
     }
@@ -252,12 +256,12 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             sendServiceMessage(PlaybackService.ACTION_PREV);
         } else if (v == next) {
             sendServiceMessage(PlaybackService.ACTION_NEXT);
-        } else if (v == fakeShareButton) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
-            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + playList.getCurrentTrack().previewURL);
-            startActivity(Intent.createChooser(shareIntent, getString(R.string.sharechooser_title)));
+//        } else if (v == fakeShareButton) { TODO
+//            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//            shareIntent.setType("text/plain");
+//            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
+//            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + playList.getCurrentTrack().previewURL);
+//            startActivity(Intent.createChooser(shareIntent, getString(R.string.sharechooser_title)));
         }
 
     }
