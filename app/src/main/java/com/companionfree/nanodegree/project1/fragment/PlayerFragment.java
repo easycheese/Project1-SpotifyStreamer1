@@ -2,13 +2,10 @@ package com.companionfree.nanodegree.project1.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -202,29 +199,12 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             playList = savedInstanceState.getParcelable(resultsSave);
         } else {
             if (!isResuming) {
-                playMusic();
+                loadingBar.setVisibility(View.VISIBLE);
+                sendServiceMessage(PlaybackService.ACTION_PLAY);
             }
         }
 
         setTrackVisuals();
-
-    }
-    private void playMusic() {
-        ConnectivityManager cm =
-                (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        if (!isConnected) {
-//            displayError(R.string.error_network_availability); TODO
-        } else {
-//            removeError(); TODO
-            loadingBar.setVisibility(View.VISIBLE);
-            sendServiceMessage(PlaybackService.ACTION_PLAY);
-        }
-
 
     }
 
@@ -241,6 +221,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     }
 
     // This method will be called when a MusicStatusEvent is posted
+    @SuppressWarnings("unused")
     public void onEvent(MusicStatusEvent event){
         setPlayButtonDrawable(event.isPlaying);
         if (event.isSkipping) {
@@ -254,6 +235,8 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         int id = (isPlaying) ? R.drawable.ic_pause_black_24dp : R.drawable.ic_play_arrow_black_24dp;
         play.setImageResource(id);
     }
+
+    @SuppressWarnings("unused")
     public void onEventMainThread(MusicStatusTimeEvent event) {
         progressBar.setProgress(event.progress);
         currentSongTime.setText(getTimeString(event.progress));

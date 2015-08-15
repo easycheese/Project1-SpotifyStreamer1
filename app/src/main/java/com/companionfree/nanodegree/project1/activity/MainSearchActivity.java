@@ -48,14 +48,12 @@ public class MainSearchActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_search);
         ButterKnife.inject(this);
 
-//        if (findViewById(R.id.top_songs_list_container) != null) {
         if (fragmentContainer != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
-//            mainToolbar = (Toolbar) findViewById(R.id.maintoolbar);
 
             if (savedInstanceState == null) {
                 ArtistSearchFragment fragment = new ArtistSearchFragment();
@@ -68,8 +66,6 @@ public class MainSearchActivity extends AppCompatActivity  {
                         .replace(R.id.top_songs_list_container, topSongsFragment)
                         .commit();
             }
-// TODO two pane mode needs to have a different error layout and void out current results
-
 
             // In two-pane mode, list items should be given the TODO
             // 'activated' state when touched.
