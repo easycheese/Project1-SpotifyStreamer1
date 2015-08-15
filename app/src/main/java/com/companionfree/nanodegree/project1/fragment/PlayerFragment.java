@@ -174,6 +174,7 @@ public class PlayerFragment extends DialogFragment implements MenuItem.OnMenuIte
             DrawableCompat.setTint(d, currentTrack.getPaletteColor());
         }
 
+        setPlayButtonDrawable(PlaybackService.isPlaying());
     }
 
     private String getTimeString(long millis) {

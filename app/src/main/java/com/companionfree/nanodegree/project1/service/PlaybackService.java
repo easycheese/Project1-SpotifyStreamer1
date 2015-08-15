@@ -144,7 +144,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 stopSelf();
                 break;
         }
-        if (action.equals(ACTION_STOP_SERVICE)) {
+        if (!action.equals(ACTION_STOP_SERVICE)) {
             setNotification();
         }
     }

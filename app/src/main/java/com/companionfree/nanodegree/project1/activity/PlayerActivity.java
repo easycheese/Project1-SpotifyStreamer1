@@ -41,8 +41,6 @@ public class PlayerActivity extends AppCompatActivity {
 
         ButterKnife.inject(this);
 
-
-
         Bundle bundle = getIntent().getExtras();
         boolean isResuming = bundle.getBoolean(PlayerFragment.RESUMING_PLAYER);
         Playlist playlist;
@@ -69,10 +67,13 @@ public class PlayerActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        PlayerFragment newFragment = PlayerFragment.newInstance();
-        ft.add(R.id.embedded, newFragment);
-        ft.commit();
+        if (savedInstanceState == null) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            PlayerFragment newFragment = PlayerFragment.newInstance();
+            ft.replace(R.id.embedded, newFragment);
+            ft.commit();
+        }
+
     }
 
 

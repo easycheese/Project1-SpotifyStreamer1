@@ -67,7 +67,7 @@ public class TopSongsActivity extends AppCompatActivity implements MenuItem.OnMe
         settings.setVisible(false);
 
         nowPlayingButton = menu.findItem(R.id.menu_now_playing);
-        nowPlayingButton.setVisible(false);
+        nowPlayingButton.setVisible(PlaybackService.isPlaying());
         nowPlayingButton.setOnMenuItemClickListener(this);
 
         return super.onCreateOptionsMenu(menu);
