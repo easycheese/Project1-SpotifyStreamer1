@@ -14,10 +14,11 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -35,6 +36,7 @@ import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
 import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
+import com.companionfree.nanodegree.project1.util.ShareManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +47,7 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Kyle on 6/6/2015
  */
-public class PlayerFragment extends DialogFragment implements View.OnClickListener{
+public class PlayerFragment extends DialogFragment implements MenuItem.OnMenuItemClickListener, View.OnClickListener {
 
     public static final String PLAYLIST = "playlist";
     public static final String RESUMING_PLAYER = "resuming";
@@ -69,6 +71,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     @InjectView(R.id.toolbar)Toolbar toolbar;
 
     private boolean isResuming = false;
+    private MenuItem shareButton;
 
     public static PlayerFragment newInstance() {
         return new PlayerFragment();
@@ -107,8 +110,6 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         previous.setOnClickListener(this);
         next.setOnClickListener(this);
 
-//        fakeShareButton.setOnClickListener(this); TODO
-
         return rootView;
     }
 
@@ -116,6 +117,9 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
     private void setTrackVisuals() {
         CustomTrack currentTrack = playList.getCurrentTrack();
 
+        toolbar.setTitle(currentTrack.artistName);
+        toolbar.setSubtitle(currentTrack.albumName);
+        
         loadingBar.setVisibility(View.VISIBLE);
         Glide.with(getActivity()).load(currentTrack.albumURL)
                 .fitCenter()
@@ -160,8 +164,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
                 ((PlayerActivity)activity).setThemeColors(currentTrack);
 
             } else {
-//                fakeToolbar.setVisibility(View.VISIBLE); TODO
-//                fakeToolbar.setBackgroundColor(currentTrack.getPaletteColor());
+                toolbar.setBackgroundColor(currentTrack.getPaletteColor());
             }
 
 
@@ -207,7 +210,11 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         if (getActivity() instanceof PlayerActivity) {
             toolbar.setVisibility(View.GONE);
         }
-        toolbar.inflateMenu(R.menu.menu_player);
+        toolbar.inflateMenu(R.menu.menu_player_fragment);
+
+        Menu menu = toolbar.getMenu();
+        shareButton = menu.findItem(R.id.menu_item_share);
+        shareButton.setOnMenuItemClickListener(this);
         setTrackVisuals();
 
     }
@@ -256,14 +263,7 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
             sendServiceMessage(PlaybackService.ACTION_PREV);
         } else if (v == next) {
             sendServiceMessage(PlaybackService.ACTION_NEXT);
-//        } else if (v == fakeShareButton) { TODO
-//            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//            shareIntent.setType("text/plain");
-//            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
-//            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + playList.getCurrentTrack().previewURL);
-//            startActivity(Intent.createChooser(shareIntent, getString(R.string.sharechooser_title)));
         }
-
     }
 
     private void sendServiceMessage(String action) {
@@ -271,6 +271,16 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
         i.setAction(action);
         i.putExtra(PlayerFragment.PLAYLIST, playList);
         getActivity().startService(i);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        if (item == shareButton) {
+            Intent shareIntent = ShareManager.getShareDetails(playList.getCurrentTrack(), getActivity());
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.sharechooser_title)));
+            return true;
+        }
+        return false;
     }
 
 }

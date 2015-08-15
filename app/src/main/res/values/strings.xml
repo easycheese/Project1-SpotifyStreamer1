@@ -4,6 +4,7 @@
     <string name="menu_search">Search Spotify</string>
     <string name="menu_now_playing">Now Playing</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_share">Share</string>
 
     <string name="pref_notification">Display Notification Controls</string>
     <string name="pref_country">Select Country</string>

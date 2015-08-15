@@ -19,6 +19,7 @@ import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
 import com.companionfree.nanodegree.project1.model.Playlist;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
+import com.companionfree.nanodegree.project1.util.ShareManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -111,11 +112,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     public void setShareIntent(CustomTrack currentTrack) {
         if (currentTrack != null) {
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_url));
-            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, "" + currentTrack.previewURL);
-            mShareActionProvider.setShareIntent(shareIntent);
+            mShareActionProvider.setShareIntent(ShareManager.getShareDetails(currentTrack, this));
         }
     }
 }
