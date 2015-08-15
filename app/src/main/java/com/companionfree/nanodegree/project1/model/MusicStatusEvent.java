@@ -7,9 +7,11 @@ public class MusicStatusEvent {
 
     public boolean isPlaying;
     public Playlist currentPlaylist;
+    public boolean isSkipping;
 
-    public MusicStatusEvent(boolean isPlaying, Playlist currentPlaylist) {
+    public MusicStatusEvent(boolean isPlaying, Playlist currentPlaylist, boolean isSkipping) {
         this.isPlaying = isPlaying;
         this.currentPlaylist = currentPlaylist;
+        this.isSkipping = isSkipping;
     }
 }

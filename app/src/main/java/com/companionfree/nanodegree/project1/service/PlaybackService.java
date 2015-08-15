@@ -54,6 +54,8 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     private static String WIFI_LOCK_TAG = "wifiLock";
     private static String MEDIA_SESSION_TAG = "mediaSessionTag";
 
+    private boolean isSkipping = false;
+
     // TODO Handling the AUDIO_BECOMING_NOISY Intent
     // TODO make dismissable notification on pause
 
@@ -71,7 +73,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 playlist = newPlaylist;
             }
 
-            if (!playlist.getCurrentTrack().id.equals(newPlaylist.getCurrentTrack().id)) { //TODO null
+            if (!playlist.getCurrentTrack().id.equals(newPlaylist.getCurrentTrack().id)) {
                 Log.d(getClass().getSimpleName(), "Stopping song, new playlist loaded");
                 playlist = newPlaylist;
                 newPlaylistData = true;
@@ -116,17 +118,19 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                     mMediaPlayer.prepareAsync();
                 }
 
-                EventBus.getDefault().post(new MusicStatusEvent(playing, playlist));
+                EventBus.getDefault().post(new MusicStatusEvent(playing, playlist, false));
                 break;
             case ACTION_NEXT:
                 if (mMediaPlayer != null) {
                     playlist.skipNext();
+                    isSkipping = true;
                     playNewTrack();
                 }
                 break;
             case ACTION_PREV:
                 if (mMediaPlayer != null) {
-                    playlist.skipPrevious();
+                    playlist.skipPrevious(); // TODO fragment player only getting the updates about the first skip, creating new player fragments?
+                    isSkipping = true;
                     playNewTrack();
                 }
                 break;
@@ -266,7 +270,8 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
             Log.d("Spotify", "MediaPlayer Starting");
             player.start();
             setNotification();
-            EventBus.getDefault().post(new MusicStatusEvent(true, playlist)); // TODO only necessary if first song?
+            EventBus.getDefault().post(new MusicStatusEvent(true, playlist, isSkipping));
+            isSkipping = false;
         }
 
     @Override
@@ -275,7 +280,7 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         // The MediaPlayer has moved to the Error state, must be reset!
         Log.d("Spotify", "MediaPlayer Error, resetting");
         mp.reset();
-        EventBus.getDefault().post(new MusicStatusEvent(false, playlist));
+        EventBus.getDefault().post(new MusicStatusEvent(false, playlist, false));
         return false;
     }
 
@@ -316,6 +321,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
     @Override
     public void onCompletion(MediaPlayer mp) {
         Log.d(getClass().getSimpleName(), "music stopped");
-        EventBus.getDefault().post(new MusicStatusEvent(false, playlist));
+        EventBus.getDefault().post(new MusicStatusEvent(false, playlist, false));
     }
 }

@@ -10,7 +10,6 @@ import com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
-import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
 
 import de.greenrobot.event.EventBus;

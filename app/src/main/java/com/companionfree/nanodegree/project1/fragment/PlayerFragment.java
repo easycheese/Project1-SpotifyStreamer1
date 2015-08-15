@@ -242,15 +242,11 @@ public class PlayerFragment extends DialogFragment implements View.OnClickListen
 
     // This method will be called when a MusicStatusEvent is posted
     public void onEvent(MusicStatusEvent event){
-
         setPlayButtonDrawable(event.isPlaying);
-
-        CustomTrack serviceCurrentTrack = event.currentPlaylist.getCurrentTrack();
-        if (!playList.getCurrentTrack().id.equals(serviceCurrentTrack.id)) {
-            // TODO need to reload album and name
+        if (event.isSkipping) {
             playList = event.currentPlaylist;
             setTrackVisuals();
-            ((PlayerActivity)getActivity()).setShareIntent(playList.getCurrentTrack()); // TODO need to adapt for tablet
+            ((PlayerActivity)getActivity()).setShareIntent(playList.getCurrentTrack());
         }
     }
 

@@ -20,7 +20,6 @@ import android.widget.Button;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
-import com.companionfree.nanodegree.project1.activity.PlayerActivity;
 import com.companionfree.nanodegree.project1.activity.SettingsActivity;
 import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
