@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.companionfree.nanodegree.project1.R;
+import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
 import com.companionfree.nanodegree.project1.adapter.TopSongsAdapter;
 import com.companionfree.nanodegree.project1.model.CustomTrack;
+import com.companionfree.nanodegree.project1.util.ConnectionManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,16 +78,15 @@ public class TopSongsFragment extends BaseFragment{
             if (customTracks != null) {
                 tracks.addAll(customTracks);
             }
-        } else {
+        } else if (artistId != null){
             executeSearch();
         }
     }
 
     private void executeSearch() {
-        boolean isConnected = getConnectivityStatus();
         killRunningTaskIfExists();
 
-        if (!isConnected) {
+        if (!ConnectionManager.hasNetworkConnection(getActivity())) {
             displayError(R.string.error_network_availability, false);
         } else {
             removeError();

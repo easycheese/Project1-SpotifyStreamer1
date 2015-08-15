@@ -25,6 +25,7 @@ import com.companionfree.nanodegree.project1.adapter.ArtistAdapter;
 import com.companionfree.nanodegree.project1.model.CustomArtist;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
+import com.companionfree.nanodegree.project1.util.ConnectionManager;
 
 import java.util.ArrayList;
 
@@ -114,7 +115,7 @@ public class ArtistSearchFragment extends BaseFragment implements SearchView.OnQ
 
 
     protected void executeSearch() {
-        boolean isConnected = getConnectivityStatus();
+        boolean isConnected = ConnectionManager.hasNetworkConnection(getActivity());
         boolean searchIsEmpty = currentSearchText.equals("");
         killRunningTaskIfExists();
 

@@ -10,18 +10,12 @@ android:orientation="vertical"
         android:id="@+id/maintoolbar"
         />
     <LinearLayout
+        android:id="@+id/container_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
+        android:baselineAligned="false"
         >
-
-        <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--xmlns:tools="http://schemas.android.com/tools"-->
-        <!--android:id="@+id/artist_search_fragment"-->
-        <!--android:name="com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment"-->
-        <!--android:layout_width="0dp" android:layout_height="match_parent"-->
-        <!--android:layout_weight="1"-->
-        <!--tools:context=".ArtistSearchFragment"      />-->
 
         <FrameLayout
             android:id="@+id/artist_search_fragment"
@@ -38,6 +32,33 @@ android:orientation="vertical"
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/twopane_errortext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/error_margin_top"
+        android:visibility="gone"
 
+        >
+        <ImageView
+            android:id="@+id/error_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_thumb_down_black_48dp"
+            android:tint="@color/color_primary"
+            android:layout_gravity="center_horizontal"
+            />
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center_horizontal"
+
+            />
+    </LinearLayout>
 
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
@@ -15,6 +16,8 @@ import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.MusicStatusEvent;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
 import com.companionfree.nanodegree.project1.service.PlaybackService;
+import com.companionfree.nanodegree.project1.util.ConnectionManager;
+import com.companionfree.nanodegree.project1.util.ErrorManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -88,9 +91,13 @@ public class TopSongsActivity extends AppCompatActivity implements MenuItem.OnMe
         launchPlayer(bundle);
     }
     private void launchPlayer(Bundle bundle) {
-        Intent intent = new Intent(this, PlayerActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
+        if (!ConnectionManager.hasNetworkConnection(this)) {
+            ErrorManager.displayNetworkPlayerErrorToast(this);
+        } else {
+            Intent intent = new Intent(this, PlayerActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
     @SuppressWarnings("unused") //only received in Single pane flow

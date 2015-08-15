@@ -1,9 +1,6 @@
 package com.companionfree.nanodegree.project1.fragment;
 
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +17,7 @@ import android.widget.TextView;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.activity.MainSearchActivity;
+import com.companionfree.nanodegree.project1.util.ErrorManager;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -77,17 +75,22 @@ public class BaseFragment extends Fragment {
         }
     }
     protected void displayError(int stringId, boolean statusOnly) {
-        recyclerView.setVisibility(View.GONE);
-        errorBlock.setVisibility(View.VISIBLE);
-        errorText.setText(getActivity().getString(stringId));
-
-        int vis = (statusOnly) ? View.GONE : View.VISIBLE;
-        errorImage.setVisibility(vis);
+        Activity activity = getActivity();
+        if (activity instanceof MainSearchActivity && ((MainSearchActivity)activity).isTwoPane() && this instanceof ArtistSearchFragment) {
+            ((MainSearchActivity)activity).displayError(stringId, statusOnly);
+        } else {
+            ErrorManager.displayError(recyclerView, errorBlock, errorText, errorImage, getActivity(), stringId, statusOnly);
+        }
     }
 
     protected void removeError() {
-        recyclerView.setVisibility(View.VISIBLE);
-        errorBlock.setVisibility(View.GONE);
+        Activity activity = getActivity();
+        if (activity instanceof MainSearchActivity && ((MainSearchActivity)activity).isTwoPane()) {
+            ((MainSearchActivity)activity).removeError();
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            errorBlock.setVisibility(View.GONE);
+        }
     }
 
     protected void saveError(Bundle outState) {
@@ -102,12 +105,5 @@ public class BaseFragment extends Fragment {
         errorImage.setVisibility(savedInstanceState.getInt(errorImageVisibilitySave, View.GONE));
         errorText.setText(savedInstanceState.getString(errorTextSave));
     }
-    protected Boolean getConnectivityStatus() {
-        ConnectivityManager cm =
-                (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-    }
 }

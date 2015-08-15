@@ -1,6 +1,7 @@
 package com.companionfree.nanodegree.project1.util;
 
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.companionfree.nanodegree.project1.model.MusicStatusTimeEvent;
 
@@ -26,7 +27,11 @@ public class SpotifyMediaPlayer extends MediaPlayer {
 
         final Runnable seekBarCheck = new Runnable() {
             public void run() {
-                EventBus.getDefault().post(new MusicStatusTimeEvent(getCurrentPosition()));
+                if (isPlaying()) {
+                    EventBus.getDefault().post(new MusicStatusTimeEvent(getCurrentPosition()));
+                } else {
+                    beeperhandle.cancel(true);
+                }
             }
         };
 

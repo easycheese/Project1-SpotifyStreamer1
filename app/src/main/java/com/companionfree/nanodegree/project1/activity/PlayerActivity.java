@@ -29,6 +29,7 @@ import butterknife.InjectView;
 public class PlayerActivity extends AppCompatActivity {
 
     private ShareActionProvider mShareActionProvider;
+
     @InjectView(R.id.toolbar) Toolbar toolbar;
 
     @Override

@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.companionfree.nanodegree.project1.R;
 import com.companionfree.nanodegree.project1.fragment.ArtistSearchFragment;
@@ -11,28 +15,47 @@ import com.companionfree.nanodegree.project1.fragment.PlayerFragment;
 import com.companionfree.nanodegree.project1.fragment.TopSongsFragment;
 import com.companionfree.nanodegree.project1.model.ArtistClickEvent;
 import com.companionfree.nanodegree.project1.model.SongClickEvent;
+import com.companionfree.nanodegree.project1.util.ConnectionManager;
+import com.companionfree.nanodegree.project1.util.ErrorManager;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.Optional;
 import de.greenrobot.event.EventBus;
 
 public class MainSearchActivity extends AppCompatActivity  {
 
     private boolean mTwoPane;
 
-    private Toolbar mainToolbar;
+    @Optional
+    @InjectView(R.id.maintoolbar) Toolbar mainToolbar;
+
+    @Optional
+    @InjectView(R.id.container_fragment)LinearLayout fragmentContainer;
+
+    @Optional
+    @InjectView(R.id.twopane_errortext) LinearLayout errorBlock;
+
+    @Optional
+    @InjectView(R.id.error_text) TextView errorText;
+
+    @Optional
+    @InjectView(R.id.error_image) ImageView errorImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_search);
+        ButterKnife.inject(this);
 
-        if (findViewById(R.id.top_songs_list_container) != null) {
+//        if (findViewById(R.id.top_songs_list_container) != null) {
+        if (fragmentContainer != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
-            mainToolbar = (Toolbar) findViewById(R.id.maintoolbar);
+//            mainToolbar = (Toolbar) findViewById(R.id.maintoolbar);
 
             if (savedInstanceState == null) {
                 ArtistSearchFragment fragment = new ArtistSearchFragment();
@@ -62,6 +85,14 @@ public class MainSearchActivity extends AppCompatActivity  {
         return mTwoPane;
     }
 
+    public void displayError(int errorStringId, Boolean statusOnly) {
+        ErrorManager.displayError(fragmentContainer, errorBlock, errorText, errorImage, this, errorStringId, statusOnly);
+    }
+    public void removeError() {
+        errorBlock.setVisibility(View.GONE);
+        fragmentContainer.setVisibility(View.VISIBLE);
+    }
+
     @SuppressWarnings("unused")
     public void onEvent(ArtistClickEvent event){
         Bundle bundle = new Bundle();
@@ -84,9 +115,13 @@ public class MainSearchActivity extends AppCompatActivity  {
 
     @SuppressWarnings("unused")
     public void onEvent(SongClickEvent event){ // only received in Master-Detail flow
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
-        launchPlayer(bundle);
+        if (!ConnectionManager.hasNetworkConnection(this)) {
+            ErrorManager.displayNetworkPlayerErrorToast(this);
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(PlayerFragment.PLAYLIST, event.playlist);
+            launchPlayer(bundle);
+        }
     }
     public void launchPlayer(Bundle bundle) {
         if (isTwoPane()) {
