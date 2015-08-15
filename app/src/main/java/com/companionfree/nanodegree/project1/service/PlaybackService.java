@@ -18,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -56,7 +57,6 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
 
     private boolean isSkipping = false;
 
-    // TODO Handling the AUDIO_BECOMING_NOISY Intent
     // TODO make dismissable notification on pause
 
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -171,9 +171,9 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
                 AudioManager.AUDIOFOCUS_GAIN);
 
         if (result != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            // could not get audio focus.
-        }
+            Toast.makeText(getApplicationContext(), getString(R.string.error_audio_focus), Toast.LENGTH_SHORT).show();
 
+        }
 
     }
     private void setNotification() {
@@ -290,10 +290,10 @@ public class PlaybackService extends Service implements SpotifyMediaPlayer.OnPre
         switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
                 // resume playback
-//                if (mMediaPlayer == null) initMediaPlayer(); TODO
-//                else if (!mMediaPlayer.isPlaying()) mMediaPlayer.start();
-//                mMediaPlayer.setVolume(1.0f, 1.0f);
-//                break;
+                if (mMediaPlayer == null) setupService();
+                else if (!mMediaPlayer.isPlaying()) mMediaPlayer.start();
+                mMediaPlayer.setVolume(1.0f, 1.0f);
+                break;
 
             case AudioManager.AUDIOFOCUS_LOSS:
                 // Lost focus for an unbounded amount of time: stop playback and release media player

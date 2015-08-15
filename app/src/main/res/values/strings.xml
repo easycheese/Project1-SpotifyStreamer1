@@ -16,5 +16,7 @@
     <string name="search_fail">No results found</string>
     <string name="error_no_results_tracks">No tracks found for this artist</string>
     <string name="error_no_search_text">Welcome to Spotify Streamer!\nTry searching for your favorite artist above!</string>
+    <string name="error_audio_focus">Error gaining audio focus</string>
+
     <string name="top_tracks">Top 10 Tracks</string>
 </resources>
